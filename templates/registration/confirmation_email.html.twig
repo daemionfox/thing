@@ -1,11 +1,15 @@
-<h1>Hi! Please confirm your email!</h1>
+<h1>Welcome to the Thing!</h1>
 
 <p>
-    Please confirm your email address by clicking the following link: <br><br>
-    <a href="{{ signedUrl }}">Confirm my Email</a>.
-    This link will expire in {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.
+    Please log into the the system and reset your password:
 </p>
+<ul>
+    <li><b>URL: </b> <a href="{{ url }}">{{ url }}</a></li>
+    <li><b>Username: </b> {{ username }}</li>
+    <li><b>Password: </b> {{ password }}</li>
+</ul>
 
 <p>
-    Cheers!
+    Thanks,
 </p>
+<p>Thing Automated Mailer</p>

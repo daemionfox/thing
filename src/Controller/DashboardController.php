@@ -39,6 +39,26 @@ class DashboardController extends AbstractController
         ]);
     }
 
+    #[Route('/changepassword', name: 'app_changepassword')]
+    public function changepassword(): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        /**
+         * @var $user User
+         */
+        $user = $this->getUser();
+
+
+
+
+        return $this->render('dashboard/changepassword.html.twig', [
+            'user' => [
+                'name' => $user->getName(),
+                'roles' => $user->getRoles()
+            ]
+        ]);
+    }
+
     #[Route('/stafflist', name: 'app_stafflist')]
     public function stafflist(): Response
     {

@@ -8,6 +8,7 @@ use App\Form\EditStaffFormType;
 use App\Form\RegistrationFormType;
 use App\Security\EmailVerifier;
 use App\Security\LoginAuthenticator;
+use App\Traits\RandomStringTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -27,6 +28,8 @@ use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 class RegistrationController extends AbstractController
 {
+    use RandomStringTrait;
+
     private EmailVerifier $emailVerifier;
 
     public function __construct(EmailVerifier $emailVerifier)
@@ -51,31 +54,32 @@ class RegistrationController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             // encode the plain password
+            $password = $this->generateRandomString();
+
             $newuser->setPassword(
                 $userPasswordHasher->hashPassword(
                     $newuser,
-                    $form->get('plainPassword')->getData()
+                    $password
                 )
             );
 
             $entityManager->persist($newuser);
             $entityManager->flush();
 
-            // generate a signed url and email it to the user
-//            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $newuser,
-//                (new TemplatedEmail())
-//                    ->from(new Address('matt@rcsipublishing.com', 'RCSI Mail Bot'))
-//                    ->to($user->getEmail())
-//                    ->subject('Please Confirm your Email')
-//                    ->htmlTemplate('registration/confirmation_email.html.twig')
-//            );
+            $data = [
+                'url' => $_SERVER['SERVER_NAME'],
+                'username' => $newuser->getEmail(),
+                'password' => $password
+            ];
 
+            $html = $this->render('registration/confirmation_email.html.twig', $data);
+
+            $from = $this->getParameter('smtpfrom');
             $email = (new Email())
-                ->from('matt@rcsipublishing.com')
+                ->from($from)
                 ->to($user->getEmail())
                 ->subject('Please Confirm your Email')
-                ->text('Sending emails is fun again!')
-                ->html('<p>See Twig integration for better HTML integration!</p>');
+                ->html($html->getContent());
             try {
                 $mailer->send($email);
             } catch (TransportExceptionInterface $te) {
@@ -124,17 +128,6 @@ class RegistrationController extends AbstractController
 
             $entityManager->persist($newuser);
             $entityManager->flush();
-
-            // generate a signed url and email it to the user
-            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $newuser,
-                (new TemplatedEmail())
-                    ->from(new Address('matt@rcsipublishing.com', 'RCSI Mail Bot'))
-                    ->to($user->getEmail())
-                    ->subject('Please Confirm your Email')
-                    ->htmlTemplate('registration/confirmation_email.html.twig')
-            );
-            // do anything else you need here, like send an email
-
 
             return new RedirectResponse("stafflist");
         }

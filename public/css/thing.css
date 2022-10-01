@@ -31,7 +31,6 @@ body {
     background-color: var(--dark);
     border-bottom: 5px solid var(--primary);
     color: var(--light) !important;
-    text-align: right;
     padding-bottom: 1em;
 }
 
@@ -39,6 +38,9 @@ body {
     border-color: var(--primary) !important;
 }
 
+.title-text {
+    font-size: 40pt;
+}
 
 
 .sidebar-item {
