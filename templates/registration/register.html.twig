@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register Staff {% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' with user %}
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'sidebar.html.twig' with user %}
+{% endblock %}
+
+{% block body %}
+    {% for flash_error in app.flashes('verify_email_error') %}
+        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+    {% endfor %}
+
+<div class="col-10 offset-1 d-flex align-items-center justify-content-center pt-5">
+    <div class="card col-12" id="register-staff-screen">
+        <div class="card-body">
+            <h1 class="h3 mb-3 font-weight-normal">Register Staff</h1>
+
+            {{ form_start(registrationForm) }}
+            {{ form_row(registrationForm.email) }}
+            {{ form_row(registrationForm.plainPassword, { label: 'Password' }) }}
+            {{ form_row(registrationForm.name) }}
+            {{ form_row(registrationForm.title) }}
+            {{ form_row(registrationForm.roles) }}
+            {{ form_rest(registrationForm) }}
+            <button class="btn btn-lg btn-primary" type="submit">Create New Staff Account</button>
+            {{ form_end(registrationForm) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

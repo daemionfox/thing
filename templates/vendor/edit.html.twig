@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Update Vendors{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' with user %}
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'sidebar.html.twig' with user %}
+{% endblock %}
+
+{% block body %}
+    {% for flash_error in app.flashes('verify_email_error') %}
+        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+    {% endfor %}
+
+    <div class="col-10 offset-1 d-flex align-items-center justify-content-center pt-5">
+        <div class="card col-12" id="register-staff-screen">
+            <div class="card-body">
+
+                {{ form_start(vendorForm) }}
+                <div class="col-3 float-end status status-{{ vendorForm.status.vars.value|lower }}">{{ form_row(vendorForm.status, {"label": " "}) }}</div>
+                <h1 class="mb-3 font-weight-normal">{{ vendorForm.name.vars.value }}</h1>
+                <h3>Dealer Info</h3>
+                {{ form_row(vendorForm.name) }}
+                {{ form_row(vendorForm.productsAndServices) }}
+                {{ form_row(vendorForm.taxid) }}
+                {{ form_row(vendorForm.rating) }}
+                {{ form_row(vendorForm.website) }}
+                {{ form_row(vendorForm.twitter) }}
+                <h3>Table Request</h3>
+                {{ form_row(vendorForm.tableRequestType) }}
+                {{ form_row(vendorForm.NumAssistants, {"label": "Number of Assistants"}) }}
+                {{ form_row(vendorForm.isMature, {"label":"Mature Section"}) }}
+                <h3>Requests</h3>
+                {{ form_row(vendorForm.seatingRequests) }}
+                {{ form_row(vendorForm.neighborRequests) }}
+                {{ form_row(vendorForm.otherRequests) }}
+                <h3>Other</h3>
+                {{ form_row(vendorForm.ImageBlock, {"label": "Setup Images"}) }}
+                <button class="btn btn-lg btn-primary" type="submit">Update Vendor</button>
+                {{ form_end(vendorForm) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,32 @@
+<div id="thing-sidebar" class="col-2 me-0 pe-0 border-end">
+
+    <div class="sidebar-item m-0 p-3"><a href="/"><i class="fas fa-tachometer-alt-fast"></i> Dashboard</a></div>
+
+    <!-- Staff -->
+    <div class="sidebar-item m-0 p-3"><a href="/stafflist"><i class="fas fa-users"></i> Staff List</a></div>
+    {% if 'ROLE_EDITSTAFF' in user.roles %}
+        <div class="sidebar-item m-0 p-3"><a href="/register"><i class="fas fa-user-edit"></i> Add Staff Member</a></div>
+    {% endif %}
+
+    <!-- Dealer's Room -->
+
+    <div class="sidebar-item m-0 p-3"><i class="fas fa-store"></i> Dealer's Room Layout</div>
+    {% if 'ROLE_EDITROOM' in user.roles %}
+        <div class="sidebar-item m-0 p-3"><i class="fas fa-digging"></i> Create Room Layout</div>
+    {% endif %}
+
+
+    <!-- Vendors -->
+    <div class="sidebar-item m-0 p-3"><a href="/vendor"><i class="fas fa-clipboard-list"></i> List Vendors</a></div>
+    {% if 'ROLE_EDITVENDOR' in user.roles %}
+        <div class="sidebar-item m-0 p-3"><a href="/vendor/import"><i class="fas fa-file-import"></i> Import Vendors</a></div>
+        <div class="sidebar-item m-0 p-3"><i class="fas fa-person-dolly"></i> Add Vendor</div>
+    {% endif %}
+
+    {% if 'ROLE_CREATEVOTE' in user.roles %}
+        <div class="sidebar-item m-0 p-3"><i class="fas fa-poll-h"></i> Create Vote</div>
+    {% endif %}
+    <div class="sidebar-item m-0 p-3"><i class="fas fa-person-booth"></i> Vote Machine</div>
+
+
+</div>

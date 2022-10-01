@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dealer's Thing - Staff{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' with user %}
+{% endblock %}
+{% block sidebar %}
+    {% include 'sidebar.html.twig' with user %}
+{% endblock %}
+{% block body %}
+    <style>
+        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    </style>
+
+<div class="col-10 offset-1 d-flex align-items-center justify-content-center pt-5">
+    <div class="card col-12" id="register-staff-screen">
+        <div class="card-header">
+            <h2>Staff List</h2>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Title</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                        <tr>
+                            <td>{{ u.name }}</td>
+                            <td>{{ u.email }}</td>
+                            <td>{{ u.title }}</td>
+                            <td>
+                                <a href="mailto:{{ u.email }}" class="btn btn-sm btn-light"><i class="far fa-envelope" title="Mail {{ u.name }}"></i></a>
+                                {% if "ROLE_EDITSTAFF" in user.roles %}
+                                <a href="/editstaff?user={{ u.name }}" class="btn btn-sm btn-info" title="Edit {{ u.name }}"><i class="far fa-edit"></i></a>
+                                <a href="/deletestaff?user={{ u.name }}" class="btn btn-sm btn-danger" title="Delete {{ u.name }}"><i class="fas fa-trash"></i></a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

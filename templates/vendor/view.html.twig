@@ -1,0 +1,136 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vendors Spotlight{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' with user %}
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'sidebar.html.twig' with user %}
+{% endblock %}
+
+{% block body %}
+    {% for flash_error in app.flashes('verify_email_error') %}
+        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+    {% endfor %}
+
+    <div class="col-10 offset-1 d-flex align-items-center justify-content-center pt-5">
+        <div class="card col-12" id="vendor-view-screen">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-9"><h1 class="mb-3 font-weight-normal">{{ vendor.name }}</h1></div>
+                    <div class="col-3"><div class="py-1 px-3 float-end status status-{{ vendor.status|lower }}">{{ vendor.status }}</div></div>
+                </div>
+                <div class="row">
+                    <div class="col-8 vendor-view">
+                        <h3>Dealer Info</h3>
+                        <div class='row mb-3'>
+                            <div class='col-4 text-end'><b>Name:</b></div>
+                            <div class='col-8'>{{ vendor.name }}</div>
+                        </div>
+
+                        <div class='row mb-3'>
+                            <div class='col-4 text-end'><b>Products And Services:</b></div>
+                            <div class='col-8'>{{ vendor.productsAndServices }}</div>
+                        </div>
+
+                        <div class='row mb-3'>
+                            <div class='col-4 text-end'><b>Tax ID:</b></div>
+                            <div class='col-8'>{{ vendor.taxid }}</div>
+                        </div>
+
+                        <div class='row mb-3'>
+                            <div class='col-4 text-end'><b>Rating:</b></div>
+                            <div class='col-8'>{{ vendor.rating }}</div>
+                        </div>
+
+                        <div class='row mb-3'>
+                            <div class='col-4 text-end'><b>Website:</b></div>
+                            <div class='col-8'><a href="{% if vendor.website|slice(0,4)|lower == 'http' %}{{ vendor.website }}{% else %}http://{{ vendor.website }}{% endif %}" target="_blank">{{ vendor.website }}</a></div>
+                        </div>
+
+                        <div class='row mb-3'>
+                            <div class='col-4 text-end'><b>Twitter:</b></div>
+                            <div class='col-8'><a href="https://twitter.com/{{ vendor.twitter }}" target="_blank">{{ vendor.twitter }}</a></div>
+                        </div>
+
+                        <h3>Table Request</h3>
+                        <div class='row mb-3'>
+                            <div class='col-4 text-end'><b>Table Type:</b></div>
+                            <div class='col-8'>{{ vendor.tableRequestType }}</div>
+                        </div>
+
+                        <div class='row mb-3'>
+                            <div class='col-4 text-end'><b>Number of Assistants:</b></div>
+                            <div class='col-8'>{{ vendor.NumAssistants }}</div>
+                        </div>
+
+                        <div class='row mb-3'>
+                            <div class='col-4 text-end'><b>Mature Section:</b></div>
+                            <div class='col-8'>{% if vendor.isMature %}Yes{% else %}No{% endif %}</div>
+                        </div>
+
+                        <h3>Requests</h3>
+                        <div class='row mb-3'>
+                            <div class='col-4 text-end'><b>Seating Requests:</b></div>
+                            <div class='col-8'>{{ vendor.seatingRequests }}</div>
+                        </div>
+
+                        <div class='row mb-3'>
+                            <div class='col-4 text-end'><b>Neighbor Requests:</b></div>
+                            <div class='col-8'>{{ vendor.neighborRequests }}</div>
+                        </div>
+
+                        <div class='row mb-3'>
+                            <div class='col-4 text-end'><b>Other Requests:</b></div>
+                            <div class='col-8'>{{ vendor.otherRequests }}</div>
+                        </div>
+
+                        <h3>Other</h3>
+                        <div class='row mb-3'>
+                            <div class='col-4 text-end'><b>Image Data:</b></div>
+                            <div class='col-8'>{{ vendor.ImageBlock }}</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="row ms-3 mb-3">
+                            <div class="card col-12" id="vendor-contact">
+                                <div class="card-body">
+                                    <h3>Contact</h3>
+                                    {% if vendor.vendorContact.badgeNumber %}
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="py-1 px-3 float-end vendor-badge status-badge">{{ vendor.vendorContact.badgeNumber }}</div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    <div class="row">
+                                        <div class="col-4 text-end"><b>Name:</b></div>
+                                        <div class="col-8">{{ vendor.vendorContact.lastName }}, {{ vendor.vendorContact.firstName }}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4 text-end"><b>Badge:</b></div>
+                                        <div class="col-8">{{ vendor.vendorContact.badgeName }}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4 text-end"><b>Email:</b></div>
+                                        <div class="col-8"><a href="mailto:{{ vendor.vendorContact.emailAddress }}">{{ vendor.vendorContact.emailAddress }}</a></div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row ms-3 ">
+                            <div class="card col-12" id="vendor-images">
+                                <div class="card-body">
+                                    <h3>Images</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

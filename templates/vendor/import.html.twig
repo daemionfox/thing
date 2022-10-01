@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Import Vendors{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' with user %}
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'sidebar.html.twig' with user %}
+{% endblock %}
+
+{% block body %}
+    {% for flash_error in app.flashes('verify_email_error') %}
+        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+    {% endfor %}
+
+    <div class="col-10 offset-1 d-flex align-items-center justify-content-center pt-5">
+        <div class="card col-12" id="register-staff-screen">
+            <div class="card-body">
+                <h1 class="h3 mb-3 font-weight-normal">Import Vendors From RegFox</h1>
+
+                {{ form_start(importForm) }}
+                {{ form_row(importForm.regfox_csv, { label: "RegFox Vendor CSV"}) }}
+                {{ form_row(importForm.import, { label: "Import/Update Vendors"}) }}
+                {{ form_end(importForm) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

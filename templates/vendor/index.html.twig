@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dealer's Thing - Vendors{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' with user %}
+{% endblock %}
+{% block sidebar %}
+    {% include 'sidebar.html.twig' with user %}
+{% endblock %}
+{% block body %}
+    <style>
+        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    </style>
+
+    <div class="col-10 offset-1 d-flex align-items-center justify-content-center pt-5">
+        <div class="card col-12" id="register-staff-screen">
+            <div class="card-header">
+                <div class="col-2 float-end text-end">Total Vendors: {{ vendors.getTotalItemCount }}</div>
+                <h2>Vendor List</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-list table-striped">
+                    <thead>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th {% if vendors.isSorted('name') %} class="sorted"{% endif %}>
+                            {{ knp_pagination_sortable(vendors, 'Name', 'name') }}</th>
+                        <th {% if vendors.isSorted('vendorContact.lastName') %} class="sorted"{% endif %}>
+                            {{ knp_pagination_sortable(vendors, 'Contact', 'vendorContact.lastName') }}</th>
+                        <th {% if vendors.isSorted('status') %} class="sorted"{% endif %}>
+                            {{ knp_pagination_sortable(vendors, 'Status', 'status') }}</th>
+                        <th>&nbsp;</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for v in vendors %}
+                        <tr>
+                            <td>{% if v.status == 'Approved' %}<i class="fas fa-badge-check"></i>{% endif %}</td>
+                            <td><a href="/vendor/view?vendor={{ v.id }}">{{ v.name }}</a></td>
+                            <td>{{ v.vendorContact.firstName }} {{ v.vendorContact.lastName }}</td>
+                            <td>{{ v.status }}</td>
+                            <td>
+                                <span class="fa-layers fa-fw">
+                                  <i class="fas fa-images"></i>
+                                  <span class="fa-layers-counter vendor-badge">{{ v.vendorImages.count }}</span>
+                                </span>
+                            </td>
+                            <td>
+                                {% if "ROLE_EDITVENDOR" in user.roles %}
+                                    <a href="mailto://{{ v.vendorContact.emailAddress }}"><i class="far fa-envelope" title="No contact email"></i></a>
+                                    <a href="/vendor/loadimages?vendor={{ v.id }}" class="btn btn-sm btn-info" title="Load images for {{ v.name }}"><i class="far fa-camera"></i></a>
+                                    <a href="/vendor/edit?vendor={{ v.id }}" class="btn btn-sm btn-info" title="Edit {{ v.name }}"><i class="far fa-edit"></i></a>
+                                    <a href="/vendor/delete?vendor={{ v.id }}" class="btn btn-sm btn-danger" title="Delete {{ v.name }}"><i class="fas fa-trash"></i></a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+                <div class="navigation">{{ knp_pagination_render(vendors) }}</div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
