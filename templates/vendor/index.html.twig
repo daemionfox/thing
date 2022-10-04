@@ -36,6 +36,9 @@
                     </tr>
                     </thead>
                     <tbody>
+                    {% if vendors|length == 0 %}
+                        <tr><td colspan="6">No vendors have been imported.</td></tr>
+                    {% endif %}
                     {% for v in vendors %}
                         <tr>
                             <td>{% if v.status == 'Approved' %}<i class="fas fa-badge-check"></i>{% endif %}</td>

@@ -98,6 +98,11 @@ body {
     width: 100%;
 }
 
+a.sortable,a.asc, a.desc {
+    text-decoration: none;
+    font-weight: bold;
+    color: var(--dark);
+}
 
 .status-applied { background-color: var(--status-applied); }
 .status-pending { background-color: var(--status-pending); }
@@ -111,4 +116,22 @@ body {
 .vendor-view div.row:nth-child(odd) {
     border-radius: 8px;
     background-color: rgba(0,0,0, 10%);
+}
+
+div.navigation {
+    border: 1px solid var(--dark);
+    background-color: var(--primary);
+    border-radius: 100px;
+    color: var(--light);
+}
+
+div.navigation span {
+    padding-left: .5em;
+    padding-right: .5em;
+}
+
+div.navigation a {
+    color: var(--light);
+    text-decoration: none;
+    font-weight: bold;
 }

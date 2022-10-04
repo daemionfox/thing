@@ -9,18 +9,16 @@
     {% include 'sidebar.html.twig' with user %}
 {% endblock %}
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/Users/sowersm/workspace/acdealers/Thing/app/src/Controller/DashboardController.php'|file_link(0) }}">src/Controller/DashboardController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/Users/sowersm/workspace/acdealers/Thing/app/templates/dashboard/index.html.twig'|file_link(0) }}">templates/dashboard/index.html.twig</a></code></li>
-    </ul>
-</div>
+    <div class="col-10 offset-1 d-flex align-items-center justify-content-center pt-5">
+        <div class="card col-12" id="register-staff-screen">
+            <div class="card-header">
+                <h2>Thing Dashboard</h2>
+            </div>
+            <div class="card-body">
+                <p>Welcome to the Thing.  Items in <span class="text-danger">red</span> in the menu are not yet available.</p>
+                <p>You may change your password by clicking on the arrow next to the logout button.</p>
+                <p>Watch this space, more to come.  Worship little green apples.</p>
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -14,26 +14,26 @@
         <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
     {% endfor %}
 
-<div class="col-6 offset-3 d-flex align-items-center justify-content-center pt-5">
-    <div class="card col-12" id="register-staff-screen">
-        <div class="card-body">
-            <h1 class="h3 mb-3 font-weight-normal">Register Staff</h1>
-            {{ form_start(deletestaffForm) }}
-            {{ form_row(deletestaffForm.name) }}
-            <div class="row">
-                <h2>Are you sure you want to remove {{ delname }}?</h2>
-                (This can not be taken back.)
+    <div class="col-6 offset-3 d-flex align-items-center justify-content-center pt-5">
+        <div class="card col-12" id="register-staff-screen">
+            <div class="card-body">
+                <h1 class="h3 mb-3 font-weight-normal">Register Staff</h1>
+                {{ form_start(deletestaffForm) }}
+                {{ form_row(deletestaffForm.name) }}
+                <div class="row">
+                    <h2>Are you sure you want to remove {{ delname }}?</h2>
+                    (This can not be taken back.)
+                </div>
+                <div class="row">
+                <button class="btn btn-lg btn-danger" type="submit">
+                    <i class="fas fa-trash"></i> Yes, Delete {{ delname }}
+                </button>
+                <a href="/stafflist" class="btn btn-lg btn-primary">
+                    <i class="fas fa-arrow-circle-left"></i> No, go back.
+                </a>
+                </div>
+                {{ form_end(deletestaffForm) }}
             </div>
-            <div class="row">
-            <button class="btn btn-lg btn-danger" type="submit">
-                <i class="fas fa-trash"></i> Yes, Delete {{ delname }}
-            </button>
-            <a href="/stafflist" class="btn btn-lg btn-primary">
-                <i class="fas fa-arrow-circle-left"></i> No, go back.
-            </a>
-            </div>
-            {{ form_end(deletestaffForm) }}
-            {% endblock %}
         </div>
     </div>
-</div>
+{% endblock %}
