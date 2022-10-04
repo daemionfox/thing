@@ -135,3 +135,7 @@ div.navigation a {
     text-decoration: none;
     font-weight: bold;
 }
+
+span.foo {
+    background-color: var(--primary);
+}

@@ -77,7 +77,7 @@ class RegistrationController extends AbstractController
             $from = $this->getParameter('smtpfrom');
             $email = (new Email())
                 ->from($from)
-                ->to($user->getEmail())
+                ->to($newuser->getEmail())
                 ->subject('Please Confirm your Email')
                 ->html($html->getContent());
             try {
