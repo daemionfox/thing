@@ -125,6 +125,11 @@
                             <div class="card col-12" id="vendor-images">
                                 <div class="card-body">
                                     <h3>Images</h3>
+                                    <div class="row">
+                                        {% for v in vendor.vendorImages %}
+                                            <div class="col"><img class="img-fluid" src="{{ v.imagePath|replace({"/var/www/": "/"}) }}"></div>
+                                        {% endfor %}
+                                    </div>
                                 </div>
                             </div>
                         </div>

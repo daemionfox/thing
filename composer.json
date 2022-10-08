@@ -13,12 +13,14 @@
         "php": ">=8.1",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "ext-fileinfo": "*",
         "chrome-php/chrome": "dev-feature/introduce-NetworkResponseEntity",
         "doctrine/annotations": "^1.0",
         "doctrine/doctrine-bundle": "^2.7",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.13",
         "eloquent/enumeration": "^6",
+        "guzzlehttp/guzzle": "^7",
         "knplabs/knp-paginator-bundle": "^5.9",
         "league/csv": "^9.8",
         "phpdocumentor/reflection-docblock": "^5.3",
@@ -30,6 +32,7 @@
         "symfony/console": "6.1.*",
         "symfony/doctrine-messenger": "6.1.*",
         "symfony/dotenv": "6.1.*",
+        "symfony/event-dispatcher": "^6",
         "symfony/expression-language": "6.1.*",
         "symfony/flex": "^2",
         "symfony/form": "6.1.*",
@@ -56,7 +59,8 @@
         "symfony/yaml": "6.1.*",
         "symfonycasts/verify-email-bundle": "^1.11",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0"
+        "twig/twig": "^2.12|^3.0",
+        "vstelmakh/url-highlight": "^3.0"
     },
     "config": {
         "allow-plugins": {

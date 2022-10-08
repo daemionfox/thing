@@ -2,8 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Message;
 use App\Entity\User;
+use App\Enumerations\MessageIconEnumeration;
 use App\Form\ChangepasswordType;
+use App\Form\MessageType;
 use App\Form\RegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -35,11 +38,57 @@ class DashboardController extends AbstractController
          */
         $user = $this->getUser();
 
-        return $this->render('dashboard/index.html.twig', [
+        $data = [
             'controller_name' => 'DashboardController',
             'user' => [
                 'name' => $user->getName(),
                 'roles' => $user->getRoles(),
+            ],
+            'messages' => array_slice($this->getMessages(), 0, 5, true)
+        ];
+
+        return $this->render('dashboard/index.html.twig', $data);
+    }
+
+    #[Route('/addmessage', name:'app_addmessage')]
+    public function addmessage(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('ROLE_EDITSTAFF');
+
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+
+        $form = $this->createForm(MessageType::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $details = $form->get('message')->getData();
+            $subject = $form->get('subject')->getData();
+            $type = $form->get('type')->getData();
+
+            $message = new Message();
+
+            $message
+                ->setUser($user)
+                ->setMessage($details)
+                ->setSubject($subject)
+                ->setType($type);
+
+            $entityManager->persist($message);
+            $entityManager->flush();
+            return new RedirectResponse("/");
+        }
+
+
+
+        return $this->render('dashboard/message.html.twig', [
+            'messageForm' => $form->createView(),
+            'user' => [
+                'name' => $user->getName(),
+                'roles' => $user->getRoles()
             ]
         ]);
     }
@@ -120,5 +169,60 @@ class DashboardController extends AbstractController
     {
         $users = $this->doctrine->getRepository(User::class)->findAll();
         return $users;
+    }
+
+    protected function getMessages(): array
+    {
+        $messages = $this->doctrine->getRepository(Message::class)->findAll();
+        foreach ($messages as &$m) {
+            /**
+             * @var Message $m
+             */
+            $m->loadIcon();
+        }
+
+        $files = glob(__DIR__ . "/../../changelog/*.json");
+        $data = [];
+        foreach ($files as $f) {
+            $temp = json_decode(file_get_contents($f));
+            $ftime = filemtime($f);
+            if (is_array($temp)) {
+                foreach ($temp as $t) {
+                    $messages[] = $this->normalizeChangelog($t, $ftime);
+                }
+            } else {
+                $messages[] = $this->normalizeChangelog($temp, $ftime);
+            }
+        }
+
+        usort($messages, function($a, $b){
+            /**
+             * @var Message $a
+             * @var Message $b
+             */
+            return $a->getCreatedOn()->getTimestamp() <= $b->getCreatedOn()->getTimestamp();
+        });
+
+        return $messages;
+    }
+
+    protected function normalizeChangelog($data, $filetime)
+    {
+        $message = new Message();
+
+        $createdon = !empty($data->createdon) ? strtotime($data->createdon) : strtotime($filetime);
+        $type = !empty($data->type) ? $data->type : "unknown";
+        $subject = !empty($data->subject) ? $data->subject : "";
+        $details = !empty($data->message) ? $data->message : "";
+
+        $message
+            ->setCreatedon((new \DateTime())->setTimestamp($createdon))
+            ->setType($type)
+            ->setSubject($subject)
+            ->setMessage($details);
+
+
+        return $message;
+
     }
 }

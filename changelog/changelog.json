@@ -1,0 +1,16 @@
+[
+  {
+    "createdon": "2022-10-06 23:18:00",
+    "subject": "Working on image loader",
+    "type": "feature",
+    "message": "Started working on the image loader, lots of issues with it, but not going to give up.  Will probably add a method of stripping out URLs from the photo data and present them as a clickable link."
+  },
+  {
+    "createdon": "2022-10-07 21:21:00",
+    "subject": "Changelog display",
+    "type": "feature",
+    "message": "Display change log on dashboard index page."
+  }
+
+
+]

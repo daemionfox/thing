@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Dealer's Thing - Dashboard{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block header %}
     {% include 'header.html.twig' with user %}
@@ -9,15 +9,41 @@
     {% include 'sidebar.html.twig' with user %}
 {% endblock %}
 {% block body %}
-    <div class="col-10 offset-1 d-flex align-items-center justify-content-center pt-5">
-        <div class="card col-12" id="register-staff-screen">
-            <div class="card-header">
-                <h2>Thing Dashboard</h2>
+    <div class="row pt-3">
+        <div class="col-6 offset-1 d-flex">
+            <div class="card col-12" id="register-staff-screen">
+                <div class="card-header">
+                    <h2>Thing Dashboard</h2>
+                </div>
+                <div class="card-body">
+                    <p>Welcome to the Thing.  Items in <span class="text-danger">red</span> in the menu are not yet available.</p>
+                    <p>You may change your password by clicking on the arrow next to the logout button.</p>
+                    <p>Watch this space, more to come.  Worship little green apples.</p>
+                </div>
             </div>
-            <div class="card-body">
-                <p>Welcome to the Thing.  Items in <span class="text-danger">red</span> in the menu are not yet available.</p>
-                <p>You may change your password by clicking on the arrow next to the logout button.</p>
-                <p>Watch this space, more to come.  Worship little green apples.</p>
+        </div>
+        <div class="col-4 offset-1 d-flex">
+            <div class="card col-11" id="register-staff-screen">
+                <div class="card-header">
+                        {% if 'ROLE_EDITSTAFF' in user.roles %}
+                            <div class="float-end m-2"><a class="btn btn-success" href="/addmessage"><i class="fas fa-plus-square"></i></a></div>
+                        {% endif %}
+                    <h2>Messages</h2>
+                </div>
+                <div class="card-body">
+                    {% for message in messages %}
+                        <div class="row message-row mb-3">
+                            <div class="row">
+                                <div class="col-1 cl-icon"><i class="fas {{ message.icon }}"></i></div>
+                                <div class="col-7 cl-title">{{ message.subject }}</div>
+                                <div class="col-4 cl-date">{{ message.createdon|date('Y-m-d') }}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-11 offset-1 cl-message">{{ message.message }}</div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>

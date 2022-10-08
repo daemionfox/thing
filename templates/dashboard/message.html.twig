@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Change Password{% endblock %}
+{% block title %}Add Message{% endblock %}
 
 {% block header %}
     {% include 'header.html.twig' with user %}
@@ -17,12 +17,15 @@
     <div class="col-6 offset-3 d-flex align-items-center justify-content-center pt-5">
         <div class="card col-12" id="register-staff-screen">
             <div class="card-body">
-                <h1 class="h3 mb-3 font-weight-normal">Change Password</h1>
-                {{ form_start(changepasswordForm) }}
-                {{ form_row(changepasswordForm.newPassword) }}
-                {{ form_row(changepasswordForm.repeatPassword) }}
-                <button class="btn btn-lg btn-primary" type="submit">Update Password</button>
-                {{ form_end(changepasswordForm) }}
+                <h1 class="h3 mb-3 font-weight-normal">Add Message</h1>
+                {{ form_start(messageForm) }}
+                {{ form_row(messageForm.subject) }}
+                {{ form_row(messageForm.type) }}
+                {{ form_row(messageForm.message) }}
+
+
+                <button class="btn btn-lg btn-primary" type="submit">Add Message</button>
+                {{ form_end(messageForm) }}
             </div>
         </div>
     </div>

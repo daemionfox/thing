@@ -89,6 +89,9 @@ class Vendor
     #[ORM\Column(length: 255)]
     private ?string $status = VendorStatusEnumeration::STATUS_APPLIED;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $imageURLS = null;
+
     public function __construct()
     {
         $this->vendorImages = new ArrayCollection();
@@ -431,6 +434,18 @@ class Vendor
     public function setStatus(string $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getImageURLS(): ?string
+    {
+        return $this->imageURLS;
+    }
+
+    public function setImageURLS(?string $imageURLS): self
+    {
+        $this->imageURLS = $imageURLS;
 
         return $this;
     }

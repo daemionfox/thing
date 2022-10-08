@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Dealer's Thing - Vendors{% endblock %}
+{% block title %}Vendors{% endblock %}
 
 {% block header %}
     {% include 'header.html.twig' with user %}
@@ -54,7 +54,7 @@
                             <td>
                                 {% if "ROLE_EDITVENDOR" in user.roles %}
                                     <a href="mailto://{{ v.vendorContact.emailAddress }}"><i class="far fa-envelope" title="No contact email"></i></a>
-                                    <a href="/vendor/loadimages?vendor={{ v.id }}" class="btn btn-sm btn-info" title="Load images for {{ v.name }}"><i class="far fa-camera"></i></a>
+                                    <a href="/vendor/collectimages?vendor={{ v.id }}" class="btn btn-sm btn-info" title="Load images for {{ v.name }}"><i class="far fa-camera"></i></a>
                                     <a href="/vendor/edit?vendor={{ v.id }}" class="btn btn-sm btn-info" title="Edit {{ v.name }}"><i class="far fa-edit"></i></a>
                                     <a href="/vendor/delete?vendor={{ v.id }}" class="btn btn-sm btn-danger" title="Delete {{ v.name }}"><i class="fas fa-trash"></i></a>
                                 {% endif %}

@@ -2,25 +2,38 @@
 
 namespace App\Controller;
 
+use App\Command\VendorImageDownloadCommand;
 use App\Entity\User;
 use App\Entity\Vendor;
+use App\Entity\VendorImage;
+use App\Exceptions\DownloadException;
 use App\Form\VendorFormType;
-use App\Security\LoginAuthenticator;
-use ContainerEUEbPjn\PaginatorInterface_82dac15;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use HeadlessChromium\BrowserFactory;
+use HeadlessChromium\Page;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Output\NullOutput;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
+use VStelmakh\UrlHighlight\UrlHighlight;
 
 class VendorController extends AbstractController
 {
-    protected $doctrine;
+
+    protected ManagerRegistry $doctrine;
+
+
+    protected int $minWidth = 640;
+    protected int $minHeight = 480;
 
     public function __construct(ManagerRegistry $doctrine)
     {
@@ -43,6 +56,32 @@ class VendorController extends AbstractController
             ],
             'vendors' => $paginator->paginate($this->getVendorList(), $request->query->getInt('page', 1), 10)
         ]);
+    }
+
+    #[Route('/vendor/collectimages', 'app_collectvendorimages')]
+    public function collectimages(Request $request, KernelInterface $kernel, EntityManagerInterface $entityManager, ParameterBagInterface $parameterBag): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('ROLE_EDITVENDOR');
+        $vendorID = $request->query->get('vendor', '');
+        if (empty($vendorID)) {
+            return new RedirectResponse("/vendor");
+        }
+
+        $collect = new VendorImageDownloadCommand($entityManager, $parameterBag);
+
+        $application = new Application($kernel);
+        $input = new ArrayInput([
+            'command' => 'vendor:collectimages',
+            'vendorid' => $vendorID
+        ]);
+
+
+        $output = new BufferedOutput();
+        $application->run($input, $output);
+
+
+        return new RedirectResponse("/vendor");
     }
 
     #[Route('/vendor/view', name: 'app_viewvendor')]
@@ -113,4 +152,6 @@ class VendorController extends AbstractController
         $vendors = $this->doctrine->getRepository(Vendor::class) ->findAll();
         return $vendors;
     }
+
+
 }
