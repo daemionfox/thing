@@ -152,3 +152,24 @@ span.foo {
 .message-row:nth-child(even) {
     background-color: rgba(63, 110, 117, 10%)
 }
+
+.event-item {
+    border: 2px solid rgba(0,0,0,.25);
+    border-radius: 12px;
+    padding: .5em;
+}
+
+div.event-item:nth-child(even) {
+    background-color: #DDDDDD;
+
+}
+
+div.event-item.event-running {
+    background-color: #94efa7 !important;
+
+}
+
+div.event-item.event-complete {
+    background-color: #f5e39b !important;
+
+}

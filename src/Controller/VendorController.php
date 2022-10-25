@@ -3,10 +3,13 @@
 namespace App\Controller;
 
 use App\Command\VendorImageDownloadCommand;
+use App\Entity\Action;
 use App\Entity\User;
 use App\Entity\Vendor;
 use App\Entity\VendorImage;
+use App\Enumerations\ActionEnumeration;
 use App\Exceptions\DownloadException;
+use App\Form\ScrubVendorsType;
 use App\Form\VendorFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -54,9 +57,12 @@ class VendorController extends AbstractController
                 'name' => $user->getName(),
                 'roles' => $user->getRoles()
             ],
-            'vendors' => $paginator->paginate($this->getVendorList(), $request->query->getInt('page', 1), 10)
+            'vendors' => $paginator->paginate($this->getVendorList(), $request->query->getInt('page', 1), 50)
         ]);
     }
+
+
+
 
     #[Route('/vendor/collectimages', 'app_collectvendorimages')]
     public function collectimages(Request $request, KernelInterface $kernel, EntityManagerInterface $entityManager, ParameterBagInterface $parameterBag): Response
@@ -142,7 +148,58 @@ class VendorController extends AbstractController
 
     }
 
+    #[Route('/vendor/scrub', name: "app_scrubvendors")]
+    public function scrubvendors(Request $request, EntityManagerInterface $entityManager, ManagerRegistry $doctrine): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('ROLE_EDITSTAFF');
+        $this->denyAccessUnlessGranted('ROLE_EDITVENDOR');
 
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+
+        $form = $this->createForm(ScrubVendorsType::class, new Vendor());
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            new Action($user, ActionEnumeration::ACTION_VENDOR, "All vendors have been deleted from the database.", $entityManager);
+            $connection = $entityManager->getConnection();
+
+            $tables = [
+                'vendor_image',
+                'vendor_address',
+                'vendor_contact',
+                'vendor_category',
+                'vendor'
+            ];
+
+            foreach ($tables as $t) {
+                /** @noinspection SqlNoDataSourceInspection */
+                $sql = "DELETE FROM {$t}";
+                $statement = $connection->prepare($sql);
+                $statement->executeQuery([]);
+            }
+
+
+            /** @noinspection SqlNoDataSourceInspection */
+            $sql = "DELETE FROM vendor";
+            $statement = $connection->prepare($sql);
+            $statement->executeQuery([]);
+            $entityManager->flush();
+            return $this->redirectToRoute('app_dashboard');
+        }
+        return $this->render('vendor/scrubvendors.html.twig', [
+            'scrubvendorForm' => $form->createView(),
+            'user' => [
+                'email' => $user->getEmail(),
+                'name' => $user->getName(),
+                'roles' => $user->getRoles(),
+            ]
+        ]);
+    }
 
     /**
      * @return array

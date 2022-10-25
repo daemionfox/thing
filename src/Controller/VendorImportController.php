@@ -95,9 +95,9 @@ class VendorImportController extends AbstractController
         if (!empty($record[RegFoxHeaderEnumeration::REGFOX_REGID])){
             /**
              * @var $vendor Vendor
-             * @var $vendorContact VendorContact
              */
             $vendor = $this->doctrine->getRepository(Vendor::class)->findOneBy(['regfoxid' => $record[RegFoxHeaderEnumeration::REGFOX_REGID]]);
+            $vendor = $vendor ?? new Vendor();
             $vendorContact = $vendor->getVendorContact() ?? new VendorContact();
         }
 

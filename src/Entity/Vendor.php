@@ -92,11 +92,15 @@ class Vendor
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $imageURLS = null;
 
+    #[ORM\OneToMany(mappedBy: 'Vendor', targetEntity: VoteItem::class, orphanRemoval: true)]
+    private Collection $voteItems;
+
     public function __construct()
     {
         $this->vendorImages = new ArrayCollection();
         $this->vendorCategories = new ArrayCollection();
         $this->createdon = new \DateTime();
+        $this->voteItems = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -446,6 +450,36 @@ class Vendor
     public function setImageURLS(?string $imageURLS): self
     {
         $this->imageURLS = $imageURLS;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, VoteItem>
+     */
+    public function getVoteItems(): Collection
+    {
+        return $this->voteItems;
+    }
+
+    public function addVoteItem(VoteItem $voteItem): self
+    {
+        if (!$this->voteItems->contains($voteItem)) {
+            $this->voteItems->add($voteItem);
+            $voteItem->setVendor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVoteItem(VoteItem $voteItem): self
+    {
+        if ($this->voteItems->removeElement($voteItem)) {
+            // set the owning side to null (unless already changed)
+            if ($voteItem->getVendor() === $this) {
+                $voteItem->setVendor(null);
+            }
+        }
 
         return $this;
     }

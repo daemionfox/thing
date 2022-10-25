@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create Vote Event{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' with user %}
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'sidebar.html.twig' with user %}
+{% endblock %}
+
+{% block body %}
+    {% for flash_error in app.flashes('flash_error') %}
+        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+    {% endfor %}
+
+    <div class="col-10 offset-1 d-flex align-items-center justify-content-center pt-5">
+        <div class="card col-12" id="register-staff-screen">
+            <div class="card-header">
+                <h2>Create Vote Event</h2>
+            </div>
+            <div class="card-body">
+                {{ form_start(createvoteForm) }}
+
+                <div class="row mb-3">
+                    {{ form_label(createvoteForm.Name) }}
+                    <div class="col-4">{{ form_widget(createvoteForm.Name) }}</div>
+                    <div class="col-6">{{ form_help(createvoteForm.Name) }}</div>
+                </div>
+                <div class="row mb-3">
+                    {{ form_label(createvoteForm.StaffVotes) }}
+                    <div class="col-4">{{ form_widget(createvoteForm.StaffVotes) }}</div>
+                    <div class="col-6">{{ form_help(createvoteForm.StaffVotes) }}</div>
+                </div>
+                <div class="row mb-3">
+                    {{ form_label(createvoteForm.MaxVendorVotes) }}
+                    <div class="col-4">{{ form_widget(createvoteForm.MaxVendorVotes) }}</div>
+                    <div class="col-6">{{ form_help(createvoteForm.MaxVendorVotes) }}</div>
+                </div>
+                <div class="row mb-3">
+                    {{ form_label(createvoteForm.StartsOn) }}
+                    <div class="col-4">{{ form_widget(createvoteForm.StartsOn) }}</div>
+                    <div class="col-6">{{ form_help(createvoteForm.StartsOn) }}</div>
+                </div>
+                <div class="row mb-3">
+                    {{ form_label(createvoteForm.EndsOn) }}
+                    <div class="col-4">{{ form_widget(createvoteForm.EndsOn) }}</div>
+                    <div class="col-6">{{ form_help(createvoteForm.EndsOn) }}</div>
+                </div>
+
+
+                <div class="row mb-3">
+                    <div class="col-6 text-center">
+                        <button class="btn btn-lg btn-primary" type="submit">Create Vote Event</button>
+                    </div>
+                    <div class="col-6 form-text help-text">Voting events will automatically end when the expiration time occurs or when all votes have been cast.</div>
+                </div>
+
+                {{ form_end(createvoteForm) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

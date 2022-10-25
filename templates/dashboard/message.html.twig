@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block body %}
-    {% for flash_error in app.flashes('changepassword_error') %}
+    {% for flash_error in app.flashes('flash_error') %}
         <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
     {% endfor %}
 

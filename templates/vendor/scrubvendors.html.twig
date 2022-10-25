@@ -10,29 +10,29 @@
 {% endblock %}
 
 {% block body %}
-    {% for flash_error in app.flashes('flash_error') %}
+    {% for flash_error in app.flashes('verify_email_error') %}
         <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
     {% endfor %}
 
     <div class="col-6 offset-3 d-flex align-items-center justify-content-center pt-5">
         <div class="card col-12" id="register-staff-screen">
             <div class="card-body">
-                <h1 class="h3 mb-3 font-weight-normal">Register Staff</h1>
-                {{ form_start(deletestaffForm) }}
-                {{ form_row(deletestaffForm.name) }}
+                <h1 class="h3 mb-3 font-weight-normal">Delete All Vendors</h1>
+                {{ form_start(scrubvendorForm) }}
                 <div class="row">
-                    <h2>Are you sure you want to remove {{ delname }}?</h2>
+                    <h2>You are about to delete the entire vendor list.</h2>
+                    <h3>Are you sure you want to do this?</h3>
                     (This can not be taken back.)
                 </div>
                 <div class="row">
-                <button class="btn btn-lg btn-danger" type="submit">
-                    <i class="fas fa-trash"></i> Yes, Delete {{ delname }}
-                </button>
-                <a href="/stafflist" class="btn btn-lg btn-primary">
-                    <i class="fas fa-arrow-circle-left"></i> No, go back.
-                </a>
+                    <button class="btn btn-lg btn-danger" type="submit">
+                        <i class="fas fa-trash"></i> Yes, Delete all Vendors
+                    </button>
+                    <a href="/" class="btn btn-lg btn-primary">
+                        <i class="fas fa-arrow-circle-left"></i> No, go back.
+                    </a>
                 </div>
-                {{ form_end(deletestaffForm) }}
+                {{ form_end(scrubvendorForm) }}
             </div>
         </div>
     </div>

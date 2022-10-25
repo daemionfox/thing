@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Update Vendors{% endblock %}
+{% block title %}Update Vendor{% endblock %}
 
 {% block header %}
     {% include 'header.html.twig' with user %}
@@ -17,6 +17,9 @@
 
     <div class="col-10 offset-1 d-flex align-items-center justify-content-center pt-5">
         <div class="card col-12" id="register-staff-screen">
+            <div class="card-header">
+                <h2>Update Vendor</h2>
+            </div>
             <div class="card-body">
 
                 {{ form_start(vendorForm) }}

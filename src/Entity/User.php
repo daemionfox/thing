@@ -50,11 +50,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Message::class)]
     private Collection $messages;
 
+    #[ORM\OneToMany(mappedBy: 'User', targetEntity: VoteItem::class, orphanRemoval: true)]
+    private Collection $voteItems;
+
 
     public function __construct()
     {
         $this->createdon = new \DateTime();
         $this->messages = new ArrayCollection();
+        $this->voteItems = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -216,6 +220,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($message->getUser() === $this) {
                 $message->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, VoteItem>
+     */
+    public function getVoteItems(): Collection
+    {
+        return $this->voteItems;
+    }
+
+    public function addVoteItem(VoteItem $voteItem): self
+    {
+        if (!$this->voteItems->contains($voteItem)) {
+            $this->voteItems->add($voteItem);
+            $voteItem->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVoteItem(VoteItem $voteItem): self
+    {
+        if ($this->voteItems->removeElement($voteItem)) {
+            // set the owning side to null (unless already changed)
+            if ($voteItem->getUser() === $this) {
+                $voteItem->setUser(null);
             }
         }
 

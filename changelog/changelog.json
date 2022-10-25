@@ -1,5 +1,11 @@
 [
   {
+    "createdon": "2022-10-19 19:20:00",
+    "subject": "Clear vendor list",
+    "type": "feature",
+    "message": "Added a menu item to forcibly clear the vendor list.  Requires user to have the EDIT STAFF and EDIT VENDOR roles."
+  },
+  {
     "createdon": "2022-10-06 23:18:00",
     "subject": "Working on image loader",
     "type": "feature",
