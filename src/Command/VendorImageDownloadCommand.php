@@ -7,8 +7,10 @@ use App\Entity\VendorImage;
 use App\Exceptions\DownloadException;
 use Doctrine\ORM\EntityManagerInterface;
 use finfo;
+use GuzzleHttp\Exception\TransferException;
 use HeadlessChromium\BrowserFactory;
 use HeadlessChromium\Page;
+use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -25,11 +27,13 @@ class VendorImageDownloadCommand extends Command
     private int $minHeight = 480;
     private EntityManagerInterface $doctrine;
     private ParameterBagInterface $parameterBag;
+    private LoggerInterface $logger;
 
-    public function __construct(EntityManagerInterface $doctrine, ParameterBagInterface $parameterBag, string $name = null)
+    public function __construct(EntityManagerInterface $doctrine, ParameterBagInterface $parameterBag, LoggerInterface $logger, string $name = null)
     {
         $this->doctrine = $doctrine;
         $this->parameterBag = $parameterBag;
+        $this->logger = $logger;
         parent::__construct($name);
     }
 
@@ -77,6 +81,7 @@ class VendorImageDownloadCommand extends Command
         $imageBlock = $vendor->getImageBlock();
         $urlHighlight = new UrlHighlight();
         $urls = $urlHighlight->getUrls($imageBlock);
+        $vendor->setImageURLS(join("\n", $urls));
         $output->writeln("   - Found " . count($urls) . " urls");
         $path = $this->parameterBag->get("imagepath");
         $vendorSHA = sha1(strtoupper($vendor->getName()));
@@ -127,10 +132,17 @@ class VendorImageDownloadCommand extends Command
             try {
                 $output->write("   * Checking $url");
 
-
-                $guzzle = new \GuzzleHttp\Client();
-                $response = $guzzle->get($url, ['stream' => true]);
-                $file = $response->getBody()->getContents();
+                if (strtolower(substr($url,0,5)) === "data:" && stristr($url, 'base64')) {
+                    $file = base64_decode($url);
+                } else {
+                    try {
+                        $guzzle = new \GuzzleHttp\Client();
+                        $response = $guzzle->get($url, ['stream' => true, 'timeout' => '2']);
+                        $file = $response->getBody()->getContents();
+                    } catch (TransferException) {
+                        continue;
+                    }
+                }
 
 //                $file = file_get_contents($url);
                 list($ext,) = explode("/", (new finfo(FILEINFO_EXTENSION))->buffer($file));
@@ -188,7 +200,7 @@ class VendorImageDownloadCommand extends Command
         $browser = $factory->createBrowser([
             'headless' => true,
             'noSandbox' => true,
-            'debugLogger' => 'php://stdout'
+            'debugLogger' => $this->logger
         ]);
         $page = $browser->createPage();
         $images = [];

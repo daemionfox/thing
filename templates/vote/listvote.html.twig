@@ -10,10 +10,6 @@
 {% endblock %}
 
 {% block body %}
-    {% for flash_error in app.flashes('flash_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
-
     <div class="col-6 offset-3 d-flex align-items-center justify-content-center pt-5">
         <div class="card col-12" id="register-staff-screen">
             <div class="card-header">
@@ -21,7 +17,23 @@
             </div>
             <div class="card-body">
                 {% for event in events %}
-                    <div class="event-item row mb-3  {% if event.isRunning %}event-running{% elseif event.voteComplete %}event-complete{% endif %}">
+
+                    {% set statusClass = "" %}
+                    {% set canPlay = true %}
+                    {% set canStop = false %}
+                    {% if event.isRunning %}
+                        {% set statusClass = "event-running" %}
+                        {% set canPlay = false %}
+                        {% set canStop = true %}
+                    {% elseif event.voteComplete %}
+                        {% set statusClass = "event-complete" %}
+                        {% set canPlay = false %}
+                    {% elseif event.isEnded %}
+                        {% set statusClass = "event-complete" %}
+                        {% set canPlay = false %}
+                    {% endif %}
+
+                    <div class="event-item row mb-3  {{ statusClass }}">
                         <div class="col-12">
                             <div class="row">
                                 <div class="col-8">
@@ -29,16 +41,23 @@
                                 </div>
                                 <div class="col-4 event-start">
                                     {% if event.isRunning %}<span class="event-running">Running</span>
-                                    {% elseif event.voteComplete %}<span class="event-complete">Closed</span>
+                                    {% elseif event.voteComplete or event.isEnded %}<span class="event-complete">Closed</span>
                                     {% else %}Starts: {{ event.StartsOn|date("Y-m-d") }}
                                     {% endif %}
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="progress col-10 offset-1">
-                                    <div class="progress-bar {% if event.isRunning %}event-running{% elseif event.voteComplete %}event-complete{% endif %} w-{{ event.calculations.percent|round }}" role="progressbar" aria-valuenow="{{ event.calculations.percent|round }}" aria-valuemax="100" aria-valuemin="0">
-                                        {{ event.calculations.current }}%
+                                    <div class="progress-bar {{ statusClass }} w-{{ event.calculations.percent|round }}" role="progressbar" aria-valuenow="{{ event.calculations.percent|round }}" aria-valuemax="100" aria-valuemin="0">
+                                        {{ event.calculations.current }} / {{ event.calculations.total }}
                                     </div>
+                                </div>
+                                <div class="col-1 text-end">
+                                    {% if canPlay %}
+                                        <a class="btn btn-info" title="Start Vote Event Early" href="/vote/start?voteevent={{ event.id }}"><i class="fas fa-play text-white"></i></a>
+                                    {% elseif canStop %}
+                                        <a class="btn btn-danger" title="End Vote Event Early" href="/vote/end?voteevent={{ event.id }}"><i class="fas fa-octagon text-white"></i></a>
+                                    {% endif %}
                                 </div>
                             </div>
 

@@ -113,7 +113,7 @@ class DashboardController extends AbstractController
             $repeat = $form->get('repeatPassword')->getData();
 
             if ($pass !== $repeat) {
-                $this->addFlash('changepassword_error', 'Passwords did not match');
+                $this->addFlash('flash_error', 'Passwords did not match');
                 return $this->render('registration/changepassword.html.twig', [
                     'changepasswordForm' => $form->createView(),
                     'user' => [

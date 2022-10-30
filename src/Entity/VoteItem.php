@@ -32,6 +32,16 @@ class VoteItem
     #[ORM\Column(type: Types::DATETIMETZ_MUTABLE)]
     private ?\DateTimeInterface $CreatedOn = null;
 
+    #[ORM\Column]
+    private ?bool $isSkip = false;
+
+    private ?int $maxVotes = null;
+
+    public function __construct()
+    {
+        $this->CreatedOn = new \DateTime();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -95,5 +105,50 @@ class VoteItem
         $this->CreatedOn = $CreatedOn;
 
         return $this;
+    }
+
+    public function isIsSkip(): ?bool
+    {
+        return $this->isSkip;
+    }
+
+    public function setIsSkip(bool $isSkip): self
+    {
+        $this->isSkip = $isSkip;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getMaxVotes(): ?int
+    {
+        return $this->maxVotes;
+    }
+
+    /**
+     * @param int|null $maxVotes
+     */
+    public function setMaxVotes(?int $maxVotes): self
+    {
+        $this->maxVotes = $maxVotes;
+        return $this;
+    }
+
+
+
+    public function __toString()
+    {
+        $temp = [
+            'id' => $this->id,
+            'vendor' => $this->Vendor->getId(),
+            'event' => $this->VoteEvent->getId(),
+            'user' => $this->User->getId(),
+            'votes' => $this->getVotes(),
+            'skipped' => $this->isSkip === true ? '1' : '0'
+        ];
+
+        return json_encode($temp, JSON_PRETTY_PRINT);
     }
 }

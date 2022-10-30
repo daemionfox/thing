@@ -11,10 +11,6 @@
 {% endblock %}
 
 {% block body %}
-    {% for flash_error in app.flashes('verify_email_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
-
     <div class="col-10 offset-1 d-flex align-items-center justify-content-center pt-5">
         <div class="card col-12" id="register-staff-screen">
             <div class="card-header">

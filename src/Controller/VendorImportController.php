@@ -16,6 +16,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Csv\Reader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,6 +33,23 @@ class VendorImportController extends AbstractController
     {
         $this->doctrine = $entityManager;
     }
+
+    #[Route('/vendor/image/progress', 'app_vendorimageprogress')]
+    public function getProgress(Request $request): Response
+    {
+        $cacheDir = __DIR__ . "/../../cache";
+        $progressid = $request->query->get('batch');
+        $progress = [
+            'current' =>0,
+            'total' => 0
+        ];
+        if (file_exists("{$cacheDir}/{$progressid}.json")) {
+            $progress = json_decode(file_get_contents("{$cacheDir}/{$progressid}.json"), true);
+        }
+        return new JsonResponse($progress);
+    }
+
+
 
     #[Route('/vendor/import', name: 'app_vendorimport')]
     public function importCSVForm(Request $request): Response

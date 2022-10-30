@@ -1,0 +1,213 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vote Machine - {{ event.Name }}{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' with user %}
+{% endblock %}
+{% block sidebar %}
+    {% include 'sidebar.html.twig' with user %}
+{% endblock %}
+
+{% block body %}
+
+    {% set imageURLS = [] %}
+    {% set websites = [] %}
+    {% if voteItem.Vendor.imageURLS|length > 0 %}
+        {% set imageURLS = voteItem.Vendor.imageURLS|split("\n") %}
+    {% endif %}
+    {% if voteItem.Vendor.website|length > 0 %}
+        {% set websites = voteItem.Vendor.website|split(",")  %}
+    {% endif %}
+
+    <div class="row col-12 d-flex align-items-center justify-content-center pt-5">
+        <div class="card col-12" id="register-staff-screen">
+            <div class="card-header row">
+                    <div class="col-11">
+                        <h1 class="h3 mb-3 font-weight-normal">Vote Machine - {{ event.Name }}</h1>
+                    </div>
+                    <div class="col-1">
+                        <span class="fa-layers fa-fw fa-3x">
+                            <i class="fas fa-circle {% if remainingVotes <= 10 %}text-danger{% elseif remainingVotes <= 35 %}text-warning{% else %}text-success{%endif %}"></i>
+                            <i class="fas fa-box-ballot" data-fa-transform="shrink-6"></i>
+                            <span class="fa-layers-text fa-inverse" data-fa-transform="shrink-8" title="Votes Remaining">{{ remainingVotes }}</span>
+
+                        </span>
+
+                    </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <h1>{{ voteItem.Vendor.Name }}</h1>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <div class="row">
+
+                            <table class="table table-striped col-12">
+                                <tr>
+                                    <td class="text-bold">Contact</td>
+                                    <td>{{ voteItem.Vendor.vendorContact.firstName }} {{ voteItem.Vendor.vendorContact.lastName }} [{{ voteItem.Vendor.vendorContact.badgeName }}]</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-bold">Products/Services</td>
+                                    <td>{{ voteItem.Vendor.productsAndServices }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-bold">Rating</td>
+                                    <td>{{ voteItem.Vendor.rating }}
+                                        {% if voteItem.Vendor.isMature %}
+                                            <i class="fad fa-siren text-danger" title="Adult Content"></i>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-bold">Table Type</td>
+                                    <td>{{ voteItem.Vendor.tableRequestType }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-bold">Website</td>
+                                    <td>
+                                        <ul>
+                                            {% for web in websites %}
+                                                {% if 'http' not in web|trim %}
+                                                    {% set web = 'http://' ~ web|trim %}
+                                                {% endif %}
+                                                <li><a href="{{ web|trim }}" target="_blank">{{ web|trim }}</a></li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                </tr>
+                                {% if imageURLS|length > 0 %}
+                                <tr>
+                                    <td class="text-bold">Other Links</td>
+                                    <td>
+                                        <ul>
+                                            {% for iu in imageURLS %}
+                                                {% if 'http' not in iu|trim %}
+                                                    {% set iu = 'http://' ~ iu|trim %}
+                                                {% endif %}
+
+
+                                                <li><a href="{{ iu|trim }}" target="_blank">{{ iu|trim }}</a></li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                <tr>
+                                    <td class="text-bold">Categories</td>
+                                    <td>
+                                        {% for cat in voteItem.Vendor.vendorCategories %}
+                                            {{ cat.category }}{% if cat.isPrimary %}<i class="fas fa-star text-warning"></i>{% endif %}<br/>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+
+
+
+
+                            </table>
+                        </div>
+                        <div>
+                            {{ form_start(voteForm) }}
+                            {{ form_widget(voteForm.isSkip) }}
+                            <div class="row vote-row">
+                                <div class="col-2"><a class="btn btn-secondary btn-block" href="/vote?vendor={{ prevID }}"><i class="fas fa-backward fa-2x" title="Previous"></i></a></div>
+                                <div class="col-4">
+                                    <div class="row">
+                                        {{ form_widget(voteForm.Votes) }}
+                                    </div>
+                                    <div class="row text-center">
+                                       # Votes
+                                    </div>
+                                </div>
+                                <div class="col-2"><button type="submit" class="btn btn-primary btn-block" id="vote-submit-button"><i class="fas fa-vote-yea fa-2x" title="Submit Votes"></i></button></div>
+                                <div class="col-2"><button type="button" class="btn btn-warning btn-block" id="vote-skip-button"><i class="far fa-comment fa-2x" title="Skip Vendor"></i></button></div>
+
+                                <div class="col-2"><a class="btn btn-secondary btn-block" href="/vote?vendor={{ nextID }}"><i class="fas fa-forward fa-2x" title="Previous"></i></a></div>
+                            </div>
+                            {{ form_end(voteForm) }}
+                        </div>
+
+                    </div>
+                    <div class="col-7 offset-1">
+                        {% set slideID = 0 %}
+
+
+
+                        <div id="vendor-image-carousel" class="carousel">
+
+                            {% set slideID = 0 %}
+                            <div class="carousel-inner">
+                                {% if voteItem.Vendor.vendorImages|length > 0 %}
+                                    <div class="carousel-item {% if slideID == 0 %} active{% endif %}" aria-current="{% if slideID == 0 %}true{% else %}false{% endif %}">
+                                        <div class="row">
+                                            {% for vi in voteItem.Vendor.vendorImages %}
+                                                {% set imgs = vi.imagePath|split('/') %}
+                                                {% set img = imgs|slice(-1)|join('/') %}
+                                                {% set imgPath = imgs|slice(-2)|join('/') %}
+                                                <div class="col-3">
+                                                    <img src="/vendorImages/{{ imgPath }}" class="img-fluid" alt="{{ img }}"/>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    {% set slideID = slideID+1 %}
+                                {% endif %}
+                                {% if websites|length > 0 %}
+                                    {% for web in websites %}
+                                        <div class="carousel-item {% if slideID == 0 %}active{% endif %}" aria-current="{% if slideID == 0 %}true{% else %}false{% endif %}">
+                                            <embed width="100%" height="500" src="{% if 'http' not in web|trim %}http://{% endif %}{{ web|trim }}"></embed>
+                                        </div>
+                                        {% set slideID = slideID+1 %}
+                                    {% endfor %}
+                                {% endif %}
+                                {% if imageURLS|length > 0 %}
+                                    {% for iu in imageURLS %}
+                                        <div class="carousel-item {% if slideID == 0 %}active{% endif %}" aria-current="{% if slideID == 0 %}true{% else %}false{% endif %}">
+                                            <embed width="100%" height="500" src="{% if 'http' not in iu %}http://{% endif %}{{ iu }}"></embed>
+                                        </div>
+                                        {% set slideID = slideID+1 %}
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+
+                            <div class="carousel-indicators" style="background-color: rgba(0,0,0,.25);">
+                                {% for si in 0..slideID-1 %}
+                                    <button type="button" data-bs-target="#vendor-image-carousel" data-bs-slide-to="{{ si }}" {% if si == 0 %}class='active'{% endif %} aria-current="{% if si == 0 %}true{% else %}false{% endif %}" aria-label="" class="btn btn-sm btn-secondary"></button>
+                                {% endfor %}
+                            </div>
+
+                            <button class="carousel-control-prev" type="button" data-bs-target="#vendor-image-carousel" data-bs-slide="prev">
+                                <i class="fas fa-caret-left fa-4x" aria-hidden="true"></i>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#vendor-image-carousel" data-bs-slide="next">
+                                <i class="fas fa-caret-right fa-4x" aria-hidden="true"></i>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+
+
+
+
+
+
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="card-footer row">
+                <div class="col-12">
+                    {% for item in items %}
+                        <a class="item-bubble small m-1 {%  if item.Votes > 0 %}item-voted{% elseif item.isSkip == true %}item-skip{% endif %}" href="/vote?vendor={{ item.Vendor.id }}">{{ item.Vendor.Name|slice(0,1) }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
