@@ -48,7 +48,7 @@ class VendorController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         /**
-         * @var $user User
+         * @var User $user
          */
         $user = $this->getUser();
 
@@ -173,6 +173,8 @@ class VendorController extends AbstractController
                 'vendor_address',
                 'vendor_contact',
                 'vendor_category',
+                'vote_item',
+                'vote_event',
                 'vendor'
             ];
 

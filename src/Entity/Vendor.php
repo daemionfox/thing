@@ -87,13 +87,15 @@ class Vendor
     private ?bool $hasEndcap = false;
 
     #[ORM\Column(length: 255)]
-    private ?string $status = VendorStatusEnumeration::STATUS_APPLIED;
+    private ?string $status = VendorStatusEnumeration::STATUS_NOTAPPROVED;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $imageURLS = null;
 
     #[ORM\OneToMany(mappedBy: 'Vendor', targetEntity: VoteItem::class, orphanRemoval: true)]
     private Collection $voteItems;
+
+    private int $eventScore;
 
     public function __construct()
     {
@@ -462,6 +464,12 @@ class Vendor
         return $this->voteItems;
     }
 
+    public function setVoteItems(Collection $items): self
+    {
+        $this->voteItems = $items;
+        return $this;
+    }
+
     public function addVoteItem(VoteItem $voteItem): self
     {
         if (!$this->voteItems->contains($voteItem)) {
@@ -484,5 +492,54 @@ class Vendor
         return $this;
     }
 
+    /**
+     * @param int $voteEvent
+     * @return array
+     */
+    public function getVoteEventItems(int $voteEvent): ArrayCollection
+    {
+        $items = new ArrayCollection();
+        $voteItems = $this->getVoteItems();
+        /**
+         * @var VoteItem $vi
+         */
+        foreach ($voteItems as $vi) {
+            if ($vi->getVoteEvent()->getId() === $voteEvent) {
+                $items->add($vi);
+            }
+        }
+        return $items;
+    }
+
+    /**
+     * @return int
+     */
+    public function getEventScore(): int
+    {
+        return $this->eventScore;
+    }
+
+    /**
+     * @param int $eventScore
+     */
+    public function setEventScore(int $eventScore): Vendor
+    {
+        $this->eventScore = $eventScore;
+        return $this;
+    }
+
+    public function calculateEventScore(int $voteEvent): Vendor
+    {
+        $items = $this->getVoteEventItems($voteEvent);
+        $total = 0;
+        /**
+         * @var VoteItem $item
+         */
+        foreach ($items as $item) {
+            $total += $item->getVotes();
+        }
+        $this->setEventScore($total);
+        return $this;
+    }
 
 }

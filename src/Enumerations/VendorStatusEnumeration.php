@@ -11,9 +11,11 @@ class VendorStatusEnumeration
     private $constprefix = 'STATUS_';
     private $labelprefix = 'STATUS_';
 
+    const STATUS_APPROVED = 'Approved';
+    const STATUS_NOTAPPROVED = "Not Approved";
+
     const STATUS_APPLIED = 'Applied';
     const STATUS_PENDING = 'Pending';
-    const STATUS_APPROVED = 'Approved';
     const STATUS_DENIED = 'Denied';
     const STATUS_CANCELLED = 'Cancelled';
     const STATUS_DEFERRED = 'Deferred';

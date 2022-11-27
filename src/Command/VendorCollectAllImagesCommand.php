@@ -105,7 +105,7 @@ class VendorCollectAllImagesCommand extends \Symfony\Component\Console\Command\C
 
         }
 
-
+        return 0;
     }
 
 

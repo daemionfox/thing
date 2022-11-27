@@ -17,4 +17,69 @@ $(document).ready(function(){
         }
     });
 
+
+    $(".process-check").on('click', function(event){
+        event.preventDefault();
+        let bottomScore = $(this).data('score');
+        let totalVend = 0;
+
+        $(".vote-process").removeClass('process-accept');
+        $(".process-check").each(function(indx, item) {
+            let voteproc = $(item).parents('.vote-process').first();
+            let scorelocal = $(item).data('score');
+
+            if (scorelocal >= bottomScore) {
+                voteproc.addClass('process-accept');
+                totalVend++;
+            }
+
+        });
+        $("#approve_vendor_score").val(bottomScore);
+        $("#report-window").html(totalVend);
+    });
+
+    $('.vote-process').on('mouseover', function(event){
+        event.preventDefault();
+        let scoreButton = $(this).find('.process-check').first();
+        let bottomScore = $(scoreButton).data('score');
+        let totalVend = 0;
+
+        $(".process-check").each(function(indx, item) {
+            let voteproc = $(item).parents('.vote-process').first();
+            let scorelocal = $(item).data('score');
+
+            if (scorelocal >= bottomScore) {
+                totalVend++;
+            }
+
+        });
+        $("#report-hover").html(totalVend);
+    }).on('mouseout', function(event){
+        event.preventDefault();
+        $("#report-hover").html("");
+    });
+
+    $("#vote_vendor_Votes").on('blur', function(event){
+        console.log("Vote check");
+        let cur = parseInt($(this).val());
+        let max = parseInt($(this).prop('max'));
+        let min = parseInt($(this).prop('min'));
+        let remain = parseInt($("#total-votes-remaining").val());
+
+        if (remain < max) {
+            $(this).prop('max', remain);
+            max = remain;
+        }
+
+        let va = $("#vote-alert")
+        va.html("");
+        if (cur > max) {
+            $(this).val(max);
+            va.html("You may not spend more than " + max + " votes");
+        }
+        if (cur < min) {
+            $(this).val(min);
+            va.html("You may not spend less than " + min + " votes");
+        }
+    });
 });

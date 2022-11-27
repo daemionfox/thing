@@ -44,7 +44,7 @@ class RegistrationController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_EDITSTAFF');
 
         /**
-         * @var $user User
+         * @var User $user
          */
 
         $user = $this->getUser();
@@ -111,7 +111,7 @@ class RegistrationController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_EDITSTAFF');
 
         /**
-         * @var $user User
+         * @var User $user
          */
 
         $user = $this->getUser();
@@ -176,7 +176,7 @@ class RegistrationController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_EDITSTAFF');
 
         /**
-         * @var $user User
+         * @var User $user
          */
         $user = $this->getUser();
 

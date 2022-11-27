@@ -8,10 +8,15 @@ use App\Entity\Vendor;
 use App\Entity\VoteEvent;
 use App\Entity\VoteItem;
 use App\Enumerations\ActionEnumeration;
+use App\Enumerations\VendorStatusEnumeration;
+use App\Enumerations\VoteEventStatusEnumeration;
 use App\Exceptions\BadFormDataException;
 use App\Exceptions\VoteException;
+use App\Form\ApproveVendorType;
 use App\Form\CreateVoteType;
 use App\Form\VoteVendorType;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -38,7 +43,9 @@ class VoteController extends AbstractController
         try {
 
             if ($form->isSubmitted() && $form->isValid()) {
-                $voteEvent->setCreatedBy($user);
+                $voteEvent
+                    ->setCreatedBy($user)
+                    ->setStatus(VoteEventStatusEnumeration::STATUS_RUNNING);
                 /** @noinspection SqlNoDataSourceInspection */
                 /** @noinspection SqlResolve */
                 $checkVotes = $entityManager
@@ -58,7 +65,8 @@ class VoteController extends AbstractController
                 $entityManager->flush();
                 return new RedirectResponse("/vote/list");
             }
-        } catch (BadFormDataException ) {} //
+        } catch (BadFormDataException) {
+        } //
 
         return $this->render("vote/createvote.html.twig", [
             'createvoteForm' => $form->createView(),
@@ -67,8 +75,6 @@ class VoteController extends AbstractController
                 'roles' => $user->getRoles()
             ]
         ]);
-
-
 
 
     }
@@ -108,7 +114,6 @@ class VoteController extends AbstractController
         }
 
 
-
         $vendor = $entityManager->getRepository(Vendor::class)->find($vendorID);
         $voteItem = $entityManager->getRepository(VoteItem::class)->findOneBy([
             'User' => $user,
@@ -131,7 +136,8 @@ class VoteController extends AbstractController
                 $nextVend = $this->getPrevNextVendor($entityManager, $vendor, 1);
                 return new RedirectResponse("/vote?vendor={$nextVend}");
             }
-        } catch (BadFormDataException) {}
+        } catch (BadFormDataException) {
+        }
 
         $itemVotes = 0;
         /**
@@ -144,6 +150,19 @@ class VoteController extends AbstractController
         }
 
         $remainingVotes = (int)$voteEvent->getStaffVotes() - $itemVotes;
+
+        if ($remainingVotes <= 0) {
+            return $this->render("vote/voteclosed.html.twig", [
+                'user' => [
+                    'name' => $user->getName(),
+                    'roles' => $user->getRoles()
+                ],
+                'items' => $items,
+                'event' => $voteEvent
+            ]);
+        }
+
+
         return $this->render("vote/vote.html.twig", [
             'user' => [
                 'name' => $user->getName(),
@@ -154,17 +173,20 @@ class VoteController extends AbstractController
             'voteItem' => $voteItem,
             'remainingVotes' => $remainingVotes,
             'voteForm' => $form->createView(),
-            'prevID' =>  $this->getPrevNextVendor($entityManager, $vendor, -1),
+            'prevID' => $this->getPrevNextVendor($entityManager, $vendor, -1),
             'nextID' => $this->getPrevNextVendor($entityManager, $vendor, 1)
         ]);
 
     }
 
     #[Route('/vote/list', 'app_listvoteevents')]
-    public function listVoteEvents(EntityManagerInterface $entityManager) {
+    public function listVoteEvents(EntityManagerInterface $entityManager)
+    {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        $events = $entityManager->getRepository(VoteEvent::class)->findAll();
+        $criteria = new Criteria();
+        $criteria->where(Criteria::expr()->neq('status', VoteEventStatusEnumeration::STATUS_DELETED));
+        $events = $entityManager->getRepository(VoteEvent::class)->matching($criteria);
 
         /**
          * @var VoteEvent $e
@@ -173,6 +195,7 @@ class VoteController extends AbstractController
             $e->calculations = $this->getVoteTotals($entityManager, $e);
             $e->isRunning = $this->voteIsActive($e);
             $e->isEnded = $this->voteIsEnded($e);
+            $e->canProcess = $e->getStatus() === VoteEventStatusEnumeration::STATUS_PROCESSING;
         }
 
         /**
@@ -199,7 +222,7 @@ class VoteController extends AbstractController
          */
         $event = $entityManager->getRepository(VoteEvent::class)->find($voteID);
         $now = new \DateTime();
-        $event->setStartsOn($now);
+        $event->setStartsOn($now)->setStatus(VoteEventStatusEnumeration::STATUS_RUNNING);
         $entityManager->persist($event);
         $entityManager->flush();
         return new RedirectResponse("/vote/list");
@@ -207,7 +230,7 @@ class VoteController extends AbstractController
 
 
     #[Route('/vote/end', 'app_endvoteevent')]
-    public function endVote(EntityManagerInterface $entityManager, Request $request)
+    public function endVote(EntityManagerInterface $entityManager, Request $request, $status = VoteEventStatusEnumeration::STATUS_PROCESSING)
     {
         $voteID = $request->query->get('voteevent');
         /**
@@ -215,11 +238,102 @@ class VoteController extends AbstractController
          */
         $event = $entityManager->getRepository(VoteEvent::class)->find($voteID);
         $now = new \DateTime();
-        $event->setEndsOn($now);
-        $event->setVoteComplete(true);
+        $event->setEndsOn($now)->setVoteComplete(true)->setStatus($status);
         $entityManager->persist($event);
         $entityManager->flush();
         return new RedirectResponse("/vote/list");
+    }
+
+    #[Route('/vote/process', 'app_processvendorvotes')]
+    public function approveVote(EntityManagerInterface $entityManager, Request $request)
+    {
+        $vendors = $entityManager->getRepository(Vendor::class)->findAll();
+        $voteEventID = $request->query->get('voteevent');
+
+        $form = $this->createForm(ApproveVendorType::class, ['voteevent' => $voteEventID, 'score' => 0]);
+        $form->handleRequest($request);
+
+        try {
+            if ($form->isSubmitted() && $form->isValid()) {
+                $minScore = (int)$form->get('score')->getData();
+
+                if ($minScore === 0) {
+                    $this->addFlash("flash_error", "You have selected no threshold, this will result in all vendors being approved.");
+                    throw new BadFormDataException("Nope");
+                }
+
+                $vendors = $entityManager->getRepository(Vendor::class)->findAll();
+                /**
+                 * @var Vendor $vendor
+                 */
+                foreach($vendors as $vendor) {
+                    $vendScore = $vendor->calculateEventScore($voteEventID)->getEventScore();
+                    if ($vendScore >= $minScore) {
+                        $vendor->setStatus(VendorStatusEnumeration::STATUS_APPROVED);
+                        $entityManager->persist($vendor);
+                    }
+                }
+                /**
+                 * @var VoteEvent $voteEvent
+                 */
+                $voteEvent = $entityManager->getRepository(VoteEvent::class)->find($voteEventID);
+                $voteEvent->setStatus(VoteEventStatusEnumeration::STATUS_COMPLETE);
+
+
+                $entityManager->flush();
+
+
+                return new RedirectResponse("/vote/list");
+            }
+        } catch (BadFormDataException) {
+        }
+
+        $voteEvent = $entityManager->getRepository(VoteEvent::class)->find($voteEventID);
+
+        /**
+         * @var Vendor $v
+         */
+        foreach ($vendors as &$v) {
+            // This restricts vote items down to a single event
+            $v->calculateEventScore($voteEventID);
+//            $items = $v->getVoteEventItems($voteEventID);
+//            $v->setVoteItems($items);
+        }
+
+        usort($vendors, function ($a, $b){
+            /**
+             * @var Vendor $a
+             * @var Vendor $b
+             */
+            $isEq = $a->getEventScore() === $b->getEventScore();
+            if ($isEq) {
+                return $a->getName() >= $b->getName();
+            }
+            return $a->getEventScore() <= $b->getEventScore();
+        });
+
+
+
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+        return $this->render('vote/processvote.html.twig', [
+            'user' => [
+                'name' => $user->getName(),
+                'roles' => $user->getRoles()
+            ],
+            'vendors' => $vendors,
+            'event' => $voteEvent,
+            'approveform' => $form->createView()
+        ]);
+
+    }
+
+    #[Route('/vote/cancel', 'app_cancelvoteevent')]
+    public function cancelVote(EntityManagerInterface $entityManager, Request $request)
+    {
+        return $this->endVote($entityManager, $request, VoteEventStatusEnumeration::STATUS_CANCELLED);
     }
 
     private function getVoteItems(EntityManagerInterface $entityManager, User $user, VoteEvent $voteEvent)
@@ -237,7 +351,9 @@ class VoteController extends AbstractController
             }
             $tempItems[] = $item;
         }
-        $vendors = $entityManager->getRepository(Vendor::class)->findAll();
+        $criteria = new Criteria();
+        $criteria->where(Criteria::expr()->neq('status', VendorStatusEnumeration::STATUS_APPROVED));
+        $vendors = $entityManager->getRepository(Vendor::class)->matching($criteria);
 
         /**
          * @var Vendor $vendor
@@ -262,7 +378,6 @@ class VoteController extends AbstractController
         }
 
 
-
         return $voteItems;
     }
 
@@ -270,32 +385,18 @@ class VoteController extends AbstractController
     {
         $now = new \DateTime();
         $end = $event->getEndsOn();
+        if ($end === null) {
+            return false;
+        }
         $isEnded = ($now->diff($end, false))->invert;
         return $isEnded === 1;
     }
 
     private function voteIsActive(VoteEvent $event)
     {
-        $now = new \DateTime();
-
-        $start = $event->getStartsOn();
-        $end = $event->getEndsOn();
-        $isComplete = $event->isVoteComplete();
-
-        if ($isComplete) {
-            return false;
-        }
-
-        $isStarted = ($now->diff($start, false))->invert;
-        $isEnded = ($now->diff($end, false))->invert;
-
-        if ($isStarted === 1 && $isEnded !== 1) {
-            return true;
-        }
-
-        return false;
+        $status = $event->getStatus();
+        return $status === VoteEventStatusEnumeration::STATUS_RUNNING;
     }
-
 
 
     private function getVoteTotals(EntityManagerInterface $entityManager, VoteEvent $event)
@@ -310,7 +411,7 @@ class VoteController extends AbstractController
         foreach ($items as $i) {
             $currentVotes += $i->getVotes();
         }
-        $percentComplete = ($currentVotes/$totalVotes) * 100;
+        $percentComplete = ($currentVotes / $totalVotes) * 100;
 
         return ([
             'total' => $totalVotes,
@@ -343,8 +444,8 @@ class VoteController extends AbstractController
         $asde = $offset > 0 ? "ASC" : "DESC";
 
         $doctrine = $entityManager->getConnection();
-        $sql = "SELECT v.id FROM vendor v WHERE v.id {$gtlt} :vid ORDER BY v.id {$asde} LIMIT 1";
-        $query = $doctrine->prepare($sql)->executeQuery([':vid'=>$vendor->getId()]);
+        $sql = "SELECT v.id FROM vendor v WHERE v.id {$gtlt} :vid and v.status != :app ORDER BY v.id {$asde} LIMIT 1";
+        $query = $doctrine->prepare($sql)->executeQuery([':vid' => $vendor->getId(), ':app' => VendorStatusEnumeration::STATUS_APPROVED]);
         $vid = $query->fetchOne();
 
         /**

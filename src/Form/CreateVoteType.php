@@ -25,24 +25,7 @@ class CreateVoteType extends AbstractType
             ->add('MaxVendorVotes', NumberType::class, [
                 'help' => 'Maximum number of votes a staff member can give to a single vendor.  Leave blank for no max'
             ])
-            ->add('StartsOn', DateTimeType::class, [
-                'required' => true,
-                'widget' => 'single_text',
-                'attr' => [
-                    'class' => 'form-control input-inline datetimepicker',
-                    'data-provide' => 'datetimepicker'
-                ],
-                'help' => 'Leave blank to start immediately'
-            ])
-            ->add('EndsOn', DateTimeType::class, [
-                'required' => true,
-                'widget' => 'single_text',
-                'attr' => [
-                    'class' => 'form-control input-inline datetimepicker',
-                    'data-provide' => 'datetimepicker'
-                ],
-                'help' => 'Leave blank to leave open ended.'
-            ])
+
         ;
     }
 

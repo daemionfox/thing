@@ -34,7 +34,7 @@ class DashboardController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         /**
-         * @var $user User
+         * @var User $user
          */
         $user = $this->getUser();
 
@@ -98,7 +98,7 @@ class DashboardController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         /**
-         * @var $user User
+         * @var User $user
          */
         $user = $this->getUser();
 
@@ -153,7 +153,7 @@ class DashboardController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         /**
-         * @var $user User
+         * @var User $user
          */
         $user = $this->getUser();
         return $this->render('dashboard/staff.html.twig', [

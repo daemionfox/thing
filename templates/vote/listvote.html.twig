@@ -21,10 +21,15 @@
                     {% set statusClass = "" %}
                     {% set canPlay = true %}
                     {% set canStop = false %}
+                    {% set canProcess = false %}
                     {% if event.isRunning %}
                         {% set statusClass = "event-running" %}
                         {% set canPlay = false %}
                         {% set canStop = true %}
+                    {% elseif event.canProcess %}
+                        {% set statusClass = "event-ready" %}
+                        {% set canPlay = false %}
+                        {% set canProcess = true %}
                     {% elseif event.voteComplete %}
                         {% set statusClass = "event-complete" %}
                         {% set canPlay = false %}
@@ -41,6 +46,7 @@
                                 </div>
                                 <div class="col-4 event-start">
                                     {% if event.isRunning %}<span class="event-running">Running</span>
+                                    {% elseif canProcess %}<span class="event-ready">Ready to Process</span>
                                     {% elseif event.voteComplete or event.isEnded %}<span class="event-complete">Closed</span>
                                     {% else %}Starts: {{ event.StartsOn|date("Y-m-d") }}
                                     {% endif %}
@@ -57,6 +63,8 @@
                                         <a class="btn btn-info" title="Start Vote Event Early" href="/vote/start?voteevent={{ event.id }}"><i class="fas fa-play text-white"></i></a>
                                     {% elseif canStop %}
                                         <a class="btn btn-danger" title="End Vote Event Early" href="/vote/end?voteevent={{ event.id }}"><i class="fas fa-octagon text-white"></i></a>
+                                    {% elseif canProcess %}
+                                        <a class="btn btn-success" title="Process Vote" href="/vote/process?voteevent={{ event.id }}"><i class="fas fa-chalkboard-teacher text-white"></i></a>
                                     {% endif %}
                                 </div>
                             </div>

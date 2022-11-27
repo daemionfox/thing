@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enumerations\VoteEventStatusEnumeration;
 use App\Repository\VoteEventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -44,10 +45,15 @@ class VoteEvent
     #[ORM\Column]
     private ?bool $voteComplete = false;
 
+    #[ORM\Column(length: 255)]
+    private ?string $status = null;
+
     public function __construct()
     {
         $this->voteItems = new ArrayCollection();
         $this->CreatedOn = new \DateTime();
+        $this->StartsOn = new \DateTime();
+        $this->status = VoteEventStatusEnumeration::STATUS_SCHEDULED;
     }
 
     public function getId(): ?int
@@ -177,6 +183,18 @@ class VoteEvent
     public function setVoteComplete(bool $voteComplete): self
     {
         $this->voteComplete = $voteComplete;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): self
+    {
+        $this->status = $status;
 
         return $this;
     }

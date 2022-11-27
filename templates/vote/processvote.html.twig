@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Process Vote{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' with user %}
+{% endblock %}
+{% block sidebar %}
+    {% include 'sidebar.html.twig' with user %}
+{% endblock %}
+{% block body %}
+    <style>
+        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    </style>
+
+    <div class="col-10 offset-1 d-flex align-items-center justify-content-center pt-5">
+        <div class="card col-12" id="register-staff-screen">
+            <div class="card-header">
+                <h2>Voting Results for : {{ event.Name }}</h2>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-2"><h3>Score</h3></div>
+                    <div class="col-10"><h3>Vendor</h3></div>
+                </div>
+
+
+                {% for v in vendors %}
+                    <div class="row vote-process mb-3">
+                        <div class="col-2"><button class="btn btn-outline-secondary fa-2x process-check" data-score="{{ v.eventScore }}">{{ v.eventScore }}</button></div>
+                        <div class="col-10">{{ v.name }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div id="score-reporting-float" class="container">
+            <div class="row text-center"><div class="col"># Vendors</div></div>
+            <div class="row text-center"><div id="report-window" class="col">0</div><div id="report-hover"></div></div>
+            {{  form_start(approveform) }}
+            {{ form_row(approveform.voteevent) }}
+            {{ form_row(approveform.score) }}
+            <div class="row text-center"><div class="col"><button type="submit" class="btn btn-primary btn-block"><i class="fas fa-check"></i> Approve</button></div></div>
+            {{ form_end(approveform) }}
+        </div>
+    </div>
+{% endblock %}
