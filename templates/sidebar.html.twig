@@ -4,6 +4,12 @@
 
     <div class="sidebar-item m-0 p-3"><a href="/vote" class="link-success"><i class="fas fa-person-booth"></i> Vote Machine</a></div>
 
+    {% if 'ROLE_CREATEVOTE' in user.roles %}
+        <div class="sidebar-item m-0 p-3"><a href="/vote/create"><i class="fas fa-poll-h"></i> Create Vote</a></div>
+        <div class="sidebar-item m-0 p-3"><a href="/vote/list"><i class="fas fa-poll-people"></i> List Vote Events</a></div>
+    {% endif %}
+
+
     <!-- Staff -->
     <div class="sidebar-item m-0 p-3"><a href="/stafflist"><i class="fas fa-users"></i> Staff List</a></div>
     {% if 'ROLE_EDITSTAFF' in user.roles %}
@@ -27,11 +33,5 @@
             <div class="sidebar-item m-0 p-3"><a href="/vendor/scrub" class="link-danger"><i class="fas fa-exclamation-triangle"></i> Delete All Vendors</a></div>
         {% endif %}
     {% endif %}
-
-    {% if 'ROLE_CREATEVOTE' in user.roles %}
-        <div class="sidebar-item m-0 p-3"><a href="/vote/create"><i class="fas fa-poll-h"></i> Create Vote</a></div>
-        <div class="sidebar-item m-0 p-3"><a href="/vote/list"><i class="fas fa-poll-people"></i> List Vote Events</a></div>
-    {% endif %}
-
 
 </div>

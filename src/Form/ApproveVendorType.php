@@ -15,6 +15,7 @@ class ApproveVendorType extends AbstractType
     {
         $builder
             ->add('voteevent', HiddenType::class)
+            ->add('approved', HiddenType::class)
             ->add('score', HiddenType::class)
             ;
     }

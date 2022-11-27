@@ -36,9 +36,10 @@
         </div>
         <div id="score-reporting-float" class="container">
             <div class="row text-center"><div class="col"># Vendors</div></div>
-            <div class="row text-center"><div id="report-window" class="col">0</div><div id="report-hover"></div></div>
+            <div class="row text-center"><div id="report-window" class="col">{{ preapproved }}</div><div id="report-hover"></div></div>
             {{  form_start(approveform) }}
             {{ form_row(approveform.voteevent) }}
+            {{ form_row(approveform.approved) }}
             {{ form_row(approveform.score) }}
             <div class="row text-center"><div class="col"><button type="submit" class="btn btn-primary btn-block"><i class="fas fa-check"></i> Approve</button></div></div>
             {{ form_end(approveform) }}

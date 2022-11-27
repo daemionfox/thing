@@ -22,7 +22,7 @@ $(document).ready(function(){
         event.preventDefault();
         let bottomScore = $(this).data('score');
         let totalVend = 0;
-
+        let curVend = parseInt($("#approve_vendor_approved").val());
         $(".vote-process").removeClass('process-accept');
         $(".process-check").each(function(indx, item) {
             let voteproc = $(item).parents('.vote-process').first();
@@ -35,7 +35,7 @@ $(document).ready(function(){
 
         });
         $("#approve_vendor_score").val(bottomScore);
-        $("#report-window").html(totalVend);
+        $("#report-window").html(totalVend + curVend);
     });
 
     $('.vote-process').on('mouseover', function(event){

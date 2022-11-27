@@ -249,8 +249,22 @@ class VoteController extends AbstractController
     {
         $vendors = $entityManager->getRepository(Vendor::class)->findAll();
         $voteEventID = $request->query->get('voteevent');
+        $approved = 0;
+        /**
+         * @var Vendor $vendor
+         */
+        foreach ($vendors as $vendor) {
+            if ($vendor->getStatus() === VendorStatusEnumeration::STATUS_APPROVED) {
+                $approved++;
+            }
+        }
 
-        $form = $this->createForm(ApproveVendorType::class, ['voteevent' => $voteEventID, 'score' => 0]);
+        $criteria = new Criteria();
+        $criteria->where(Criteria::expr()->neq('status', VendorStatusEnumeration::STATUS_APPROVED));
+        $vendors = $entityManager->getRepository(Vendor::class)->matching($criteria)->toArray();
+
+
+        $form = $this->createForm(ApproveVendorType::class, ['voteevent' => $voteEventID, 'approved' => $approved, 'score' => 0]);
         $form->handleRequest($request);
 
         try {
@@ -262,7 +276,6 @@ class VoteController extends AbstractController
                     throw new BadFormDataException("Nope");
                 }
 
-                $vendors = $entityManager->getRepository(Vendor::class)->findAll();
                 /**
                  * @var Vendor $vendor
                  */
@@ -325,6 +338,7 @@ class VoteController extends AbstractController
             ],
             'vendors' => $vendors,
             'event' => $voteEvent,
+            'preapproved' => $approved,
             'approveform' => $form->createView()
         ]);
 
