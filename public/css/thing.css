@@ -259,3 +259,8 @@ div.carousel-item {
     color: #87A4A9;
     font-size: 12pt;
 }
+
+#vendor-images img {
+    min-width: 200px;
+    max-width: 200px;
+}

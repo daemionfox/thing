@@ -16,6 +16,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use HeadlessChromium\BrowserFactory;
 use HeadlessChromium\Page;
 use Knp\Component\Pager\PaginatorInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -65,16 +66,15 @@ class VendorController extends AbstractController
 
 
     #[Route('/vendor/collectimages', 'app_collectvendorimages')]
-    public function collectimages(Request $request, KernelInterface $kernel, EntityManagerInterface $entityManager, ParameterBagInterface $parameterBag): Response
+    public function collectimages(Request $request, KernelInterface $kernel, EntityManagerInterface $entityManager, ParameterBagInterface $parameterBag, LoggerInterface $logger): Response
     {
+        set_time_limit(-1);
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $this->denyAccessUnlessGranted('ROLE_EDITVENDOR');
         $vendorID = $request->query->get('vendor', '');
         if (empty($vendorID)) {
             return new RedirectResponse("/vendor");
         }
-
-        $collect = new VendorImageDownloadCommand($entityManager, $parameterBag);
 
         $application = new Application($kernel);
         $input = new ArrayInput([

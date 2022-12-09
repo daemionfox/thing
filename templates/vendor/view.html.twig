@@ -123,7 +123,7 @@
                                     <h3>Images</h3>
                                     <div class="row">
                                         {% for v in vendor.vendorImages %}
-                                            <div class="col"><img class="img-fluid" src="{{ v.imagePath|replace({"/var/www/": "/"}) }}"></div>
+                                            <div class="col"><img class="img-fluid" src="{{ v.imagePath|replace({"/var/www/storage": "/vendorImages"}) }}"></div>
                                         {% endfor %}
                                     </div>
                                 </div>
