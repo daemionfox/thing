@@ -12,8 +12,8 @@
     "require": {
         "php": ">=8.1",
         "ext-ctype": "*",
-        "ext-iconv": "*",
         "ext-fileinfo": "*",
+        "ext-iconv": "*",
         "chrome-php/chrome": "dev-feature/introduce-NetworkResponseEntity",
         "doctrine/annotations": "^1.0",
         "doctrine/doctrine-bundle": "^2.7",
@@ -57,6 +57,7 @@
         "symfony/validator": "6.1.*",
         "symfony/web-link": "6.1.*",
         "symfony/yaml": "6.1.*",
+        "symfonycasts/reset-password-bundle": "^1.16",
         "symfonycasts/verify-email-bundle": "^1.11",
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/twig": "^2.12|^3.0",

@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Remove Vote Event{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' with user %}
+{% endblock %}
+{% block sidebar %}
+    {% include 'sidebar.html.twig' with user %}
+{% endblock %}
+
+{% block body %}
+    <div class="col-6 offset-3 d-flex align-items-center justify-content-center pt-5">
+        <div class="card col-12" id="register-staff-screen">
+            <div class="card-body">
+                <h1 class="h3 mb-3 font-weight-normal">Delete Vote Event</h1>
+                {{ form_start(scrubvoteForm) }}
+                {{ form_row(scrubvoteForm.id) }}
+                <div class="row">
+                    <h2>You are about to delete vote event "{{ voteEvent.Name }}".</h2>
+                    <h3>Are you sure you want to do this?</h3>
+                    (This can not be taken back.)
+                </div>
+                <div class="row">
+                    <button class="btn btn-lg btn-danger" type="submit">
+                        <i class="fas fa-trash"></i> Yes, Delete Event
+                    </button>
+                    <a href="/vote/list" class="btn btn-lg btn-primary">
+                        <i class="fas fa-arrow-circle-left"></i> No, go back.
+                    </a>
+                </div>
+                {{ form_end(scrubvoteForm) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

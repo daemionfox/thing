@@ -16,25 +16,31 @@
     <div class="col-6 offset-3 d-flex align-items-center justify-content-center pt-5">
         <div class="card col-12" id="login-screen">
             <div class="card-body">
-                <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-                <label for="inputEmail">Email</label>
-                <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
-                <label for="inputPassword">Password</label>
-                <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
-
-                <input type="hidden" name="_csrf_token"
-                       value="{{ csrf_token('authenticate') }}"
-                >
-
-                <div class="checkbox mb-3">
-                    <label>
-                        <input type="checkbox" name="_remember_me"> Remember me
-                    </label>
+                <div class="row m-3">
+                    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
                 </div>
-
-                <button class="btn btn-lg btn-primary" type="submit">
-                    Sign in
-                </button>
+                <div class="row m-3">
+                    <label for="inputEmail">Email</label>
+                    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
+                </div>
+                <div class="row m-3">
+                    <label for="inputPassword">Password</label>
+                    <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+                </div>
+                <div class="row m-3">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                    <div class="col-6">
+                        <div class="checkbox mb-3">
+                            <label><input type="checkbox" name="_remember_me"> Remember me</label>
+                        </div>
+                    </div>
+                    <div class="col-6 text-end">
+                        <a href="/forgotpassword" class="btn btn-link">Forgot your Password?</a>
+                    </div>
+                </div>
+                <div class="row m-3">
+                    <button class="btn btn-lg btn-primary" type="submit"><i class="fas fa-hand-holding-box"></i> Sign in</button>
+                </div>
             </div>
         </div>
     </div>

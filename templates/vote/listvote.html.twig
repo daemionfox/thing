@@ -44,9 +44,11 @@
                                 <div class="col-8">
                                     <h3>{{ event.Name }}</h3>
                                 </div>
-                                <div class="col-4 event-start">
+                                <div class="col-4 event-start text-end mb-3">
                                     {% if event.isRunning %}<span class="event-running">Running</span>
                                     {% elseif canProcess %}<span class="event-ready">Ready to Process</span>
+                                        <a class="btn btn-danger pull-right" title="Remove Vote" href="/vote/delete?voteevent={{ event.id }}"><i class="fas fa-trash text-white"></i></a>
+
                                     {% elseif event.voteComplete or event.isEnded %}<span class="event-complete">Closed</span>
                                     {% else %}Starts: {{ event.StartsOn|date("Y-m-d") }}
                                     {% endif %}

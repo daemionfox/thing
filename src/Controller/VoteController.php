@@ -14,10 +14,12 @@ use App\Exceptions\BadFormDataException;
 use App\Exceptions\VoteException;
 use App\Form\ApproveVendorType;
 use App\Form\CreateVoteType;
+use App\Form\ScrubVoteType;
 use App\Form\VoteVendorType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -343,6 +345,54 @@ class VoteController extends AbstractController
         ]);
 
     }
+
+
+    #[Route('/vote/delete', name: "app_scrubvoteevent")]
+    public function scrubvoteevent(Request $request, EntityManagerInterface $entityManager, ManagerRegistry $doctrine): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('ROLE_EDITSTAFF');
+        $this->denyAccessUnlessGranted('ROLE_EDITVENDOR');
+
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+
+        $voteeventID = $request->query->get('voteevent');
+        $voteevent = $entityManager->getRepository(VoteEvent::class)->find($voteeventID);
+        $form = $this->createForm(ScrubVoteType::class, $voteevent);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            new Action($user, ActionEnumeration::ACTION_VOTE, "Vote event {$voteeventID} has been deleted.", $entityManager);
+            $connection = $entityManager->getConnection();
+
+            $sql = "DELETE FROM vote_item WHERE vote_event_id = :vid";
+            $statement = $connection->prepare($sql);
+            $statement->executeQuery([":vid" => $voteeventID]);
+
+            $sql = "DELETE FROM vote_event WHERE id = :vid";
+            $statement = $connection->prepare($sql);
+            $statement->executeQuery([":vid" => $voteeventID]);
+
+            $entityManager->flush();
+            return $this->redirectToRoute('app_dashboard');
+
+        }
+        return $this->render('vote/scrubvoteevent.html.twig', [
+            'scrubvoteForm' => $form->createView(),
+            'user' => [
+                'email' => $user->getEmail(),
+                'name' => $user->getName(),
+                'roles' => $user->getRoles(),
+            ],
+            'voteEvent' => $voteevent
+        ]);
+    }
+
+
 
     #[Route('/vote/cancel', 'app_cancelvoteevent')]
     public function cancelVote(EntityManagerInterface $entityManager, Request $request)

@@ -61,6 +61,12 @@ class VoteEvent
         return $this->id;
     }
 
+    public function setId(int $id): ?VoteEvent
+    {
+        $this->id = $id;
+        return $this;
+    }
+
     public function getName(): ?string
     {
         return $this->Name;
