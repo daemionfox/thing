@@ -82,4 +82,39 @@ $(document).ready(function(){
             va.html("You may not spend less than " + min + " votes");
         }
     });
+
+
+
 });
+
+function loadChart(target)
+{
+    console.log('Starting chart pull for ' + target);
+    let canvas = $("#" + target);
+    let dataurl = canvas.data('url');
+    let datatype = canvas.data('charttype');
+
+    $.get(
+        dataurl,
+        {
+            'type': datatype,
+        }
+    ).done(function(data){
+        let ctx = document.getElementById(target).getContext('2d');
+
+        let myChart = new Chart(ctx, {
+            type: datatype,
+            data: data,
+            options: {
+                legend: {
+                    position: 'left'
+                }
+            }
+        });
+    }).fail(function(data){
+        alert("Problem: " + data);
+    });
+
+
+
+}

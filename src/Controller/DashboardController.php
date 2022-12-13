@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Message;
 use App\Entity\User;
+use App\Entity\Vendor;
 use App\Enumerations\MessageIconEnumeration;
+use App\Enumerations\VendorStatusEnumeration;
 use App\Form\ChangepasswordType;
 use App\Form\MessageType;
 use App\Form\RegistrationFormType;
@@ -30,21 +32,24 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/', name: 'app_dashboard')]
-    public function index(): Response
+    public function index(Request $request, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         /**
          * @var User $user
          */
         $user = $this->getUser();
-
+        $vendorAll = $entityManager->getRepository(Vendor::class)->count([]);
+        $vendorApproved = $entityManager->getRepository(Vendor::class)->count(['status' => VendorStatusEnumeration::STATUS_APPROVED]);
         $data = [
             'controller_name' => 'DashboardController',
             'user' => [
                 'name' => $user->getName(),
                 'roles' => $user->getRoles(),
             ],
-            'messages' => array_slice($this->getMessages(), 0, 5, true)
+            'messages' => array_slice($this->getMessages(), 0, 5, true),
+            'vendorCount' => $vendorAll,
+            'vendorApproved' => $vendorApproved
         ];
 
         return $this->render('dashboard/index.html.twig', $data);

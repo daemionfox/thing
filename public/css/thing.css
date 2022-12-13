@@ -264,3 +264,7 @@ div.carousel-item {
     min-width: 200px;
     max-width: 200px;
 }
+
+#dashboard-screen .card-body .row {
+    border-bottom: 1px solid var(--primary-alt);
+}

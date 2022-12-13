@@ -249,6 +249,11 @@ class VendorImportController extends AbstractController
                     case RegFoxHeaderEnumeration::REGFOX_TABLE_SINGLE:
                         if ($this->isBool($value) === true) {
                             $vendor->setTableRequestType(TableTypeEnumeration::TABLETYPE_SINGLE);
+                        } elseif (strtoupper($value) === "1 SINGLE TABLE WITH ENDCAP") {
+                            $vendor->setTableRequestType(TableTypeEnumeration::TABLETYPE_SINGLE);
+                            $vendor->setHasEndcap(true);
+                        } elseif (strtoupper($value) === "1 SINGLE TABLE") {
+                            $vendor->setTableRequestType(TableTypeEnumeration::TABLETYPE_SINGLE);
                         }
                         break;
                     case RegFoxHeaderEnumeration::REGFOX_TABLE_SINGLEHALF:
@@ -264,6 +269,11 @@ class VendorImportController extends AbstractController
                     case RegFoxHeaderEnumeration::REGFOX_TABLE_TRIPLE:
                         if ($this->isBool($value) === true) {
                             $vendor->setTableRequestType(TableTypeEnumeration::TABLETYPE_TRIPLE);
+                        } elseif (strtoupper($value) === "1 TRIPLE TABLE WITH ENDCAP") {
+                            $vendor->setTableRequestType(TableTypeEnumeration::TABLETYPE_TRIPLE);
+                            $vendor->setHasEndcap(true);
+                        } elseif (strtoupper($value) === "1 TRIPLE TABLE") {
+                            $vendor->setTableRequestType(TableTypeEnumeration::TABLETYPE_TRIPLE);
                         }
                         break;
                     case RegFoxHeaderEnumeration::REGFOX_TABLE_QUAD:
@@ -273,6 +283,11 @@ class VendorImportController extends AbstractController
                         break;
                     case RegFoxHeaderEnumeration::REGFOX_TABLE_QUINT:
                         if ($this->isBool($value) === true) {
+                            $vendor->setTableRequestType(TableTypeEnumeration::TABLETYPE_QUINT);
+                        } elseif (strtoupper($value) === "1 QUINT TABLE WITH ENDCAP") {
+                            $vendor->setTableRequestType(TableTypeEnumeration::TABLETYPE_QUINT);
+                            $vendor->setHasEndcap(true);
+                        } elseif (strtoupper($value) === "1 QUINT TABLE") {
                             $vendor->setTableRequestType(TableTypeEnumeration::TABLETYPE_QUINT);
                         }
                         break;
