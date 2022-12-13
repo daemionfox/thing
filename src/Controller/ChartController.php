@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Vendor;
 use App\Entity\VendorCategory;
 use App\Enumerations\VendorCategoryEnumeration;
+use App\Enumerations\VendorStatusEnumeration;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,6 +28,63 @@ class ChartController extends AbstractController
     public function allvendors(Request $request, EntityManagerInterface $entityManager): Response
     {
         $vendors = $entityManager->getRepository(Vendor::class)->findAll();
+
+        $pieData = [];
+
+
+        /**
+         * @var Vendor $vendor
+         */
+        foreach ($vendors as $vendor) {
+            $categories = $vendor->getVendorCategories();
+            /**
+             * @var VendorCategory $category
+             */
+            foreach ($categories as $category) {
+                if (!$category->isIsPrimary()) {
+                    continue;
+                }
+                if (!isset($pieData[$category->getCategory()])) {
+                    $pieData[$category->getCategory()] = 0;
+                }
+                $pieData[$category->getCategory()]++;
+            }
+
+
+        }
+
+        $colors = [];
+        $labels = array_keys($pieData);
+        foreach ($labels as $label) {
+            $colors[] = VendorCategoryEnumeration::getColor($label);
+        }
+        $data = [
+            'labels' => array_keys($pieData),
+            'datasets' => [[
+                'label' => 'Categories',
+                'data' => array_values($pieData),
+                'backgroundColor' => $colors,
+                'hoverOffset' => 4,
+                'options' => [
+                    'legend' => [
+                        'display' => false
+                    ]
+                ]
+
+
+            ]],
+        ];
+
+
+        return new JsonResponse($data);
+    }
+
+
+
+    #[Route('/chart/vendors/approved', name: 'app_chartapprovedvendors')]
+    public function approvedvendors(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $vendors = $entityManager->getRepository(Vendor::class)->findBy(['status' => VendorStatusEnumeration::STATUS_APPROVED]);
 
         $pieData = [];
 
