@@ -1,5 +1,11 @@
 [
   {
+    "createdon": "2022-12-14 22:07:00",
+    "subject": "Bug Fixes",
+    "type": "bug",
+    "message": "Fixed vote lockout.  Fixed min votes start at 1.  Removed duplicate categories."
+  },
+  {
     "createdon": "2022-11-27 14:49:00",
     "subject": "Vote Machine",
     "type": "feature",

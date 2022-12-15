@@ -18,7 +18,7 @@ class VoteVendorType extends AbstractType
     {
         $attr = [
             'class' => 'form-control col-1 vendor-vote',
-            'min' => 0,
+            'min' => 1,
             'default' => 0
         ];
         /**

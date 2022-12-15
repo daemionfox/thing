@@ -65,19 +65,24 @@ $(document).ready(function(){
         let max = parseInt($(this).prop('max'));
         let min = parseInt($(this).prop('min'));
         let remain = parseInt($("#total-votes-remaining").val());
+        let currentvote = parseInt($("#current-vote-value").val());
 
-        if (remain < max) {
-            $(this).prop('max', remain);
-            max = remain;
-        }
 
         let va = $("#vote-alert")
         va.html("");
-        if (cur > max) {
+
+        if (currentvote < cur && remain === 0) {
+            $(this).val(currentvote);
+            va.html("You do not have any votes remaining");
+        } else if (currentvote < cur && cur > remain) {
+            let newv = currentvote + remain;
+            if (newv > max) { newv = max }
+            $(this).val(newv);
+            va.html("You only have " + remain + " votes remaining");
+        } else if (cur > max) {
             $(this).val(max);
             va.html("You may not spend more than " + max + " votes");
-        }
-        if (cur < min) {
+        } else if (cur < min) {
             $(this).val(min);
             va.html("You may not spend less than " + min + " votes");
         }

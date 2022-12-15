@@ -153,17 +153,6 @@ class VoteController extends AbstractController
 
         $remainingVotes = (int)$voteEvent->getStaffVotes() - $itemVotes;
 
-        if ($remainingVotes <= 0) {
-            return $this->render("vote/voteclosed.html.twig", [
-                'user' => [
-                    'name' => $user->getName(),
-                    'roles' => $user->getRoles()
-                ],
-                'items' => $items,
-                'event' => $voteEvent
-            ]);
-        }
-
 
         return $this->render("vote/vote.html.twig", [
             'user' => [

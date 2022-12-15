@@ -32,6 +32,7 @@
                             <i class="fas fa-box-ballot" data-fa-transform="shrink-6"></i>
                             <span class="fa-layers-text fa-inverse" data-fa-transform="shrink-8" title="Votes Remaining">{{ remainingVotes }}</span>
                             <input type="hidden" id="total-votes-remaining" value="{{ remainingVotes }}">
+                            <input type="hidden" id="current-vote-value" value="{{ voteForm.Votes.vars.value }}">
                         </span>
 
                     </div>
@@ -74,7 +75,11 @@
                                                 {% if 'http' not in web|trim %}
                                                     {% set web = 'http://' ~ web|trim %}
                                                 {% endif %}
-                                                <li><a href="{{ web|trim }}" target="_blank">{{ web|trim }}</a></li>
+                                                {% set disp = web %}
+                                                {% if web|length > 30 %}
+                                                    {% set disp = 'Website' %}
+                                                {% endif %}
+                                                <li><a href="{{ web|trim }}" target="_blank">{{ disp }}</a></li>
                                             {% endfor %}
                                         </ul>
                                     </td>
@@ -84,13 +89,19 @@
                                     <td class="text-bold">Other Links</td>
                                     <td>
                                         <ul>
+                                            {% set imgcnt = 1 %}
                                             {% for iu in imageURLS %}
                                                 {% if 'http' not in iu|trim %}
                                                     {% set iu = 'http://' ~ iu|trim %}
                                                 {% endif %}
+                                                {% set disp = iu|trim %}
+                                                {% if disp|length > 30 %}
+                                                    {% set disp = 'Image ' ~ imgcnt %}
+                                                    {% set imgcnt = imgcnt + 1 %}
+                                                {% endif %}
 
 
-                                                <li><a href="{{ iu|trim }}" target="_blank">{{ iu|trim }}</a></li>
+                                                <li><a href="{{ iu|trim }}" target="_blank">{{ disp }}</a></li>
                                             {% endfor %}
                                         </ul>
                                     </td>
