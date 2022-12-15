@@ -73,7 +73,7 @@
                                         <ul>
                                             {% for web in websites %}
                                                 {% if 'http' not in web|trim %}
-                                                    {% set web = 'http://' ~ web|trim %}
+                                                    {% set web = 'https://' ~ web|trim %}
                                                 {% endif %}
                                                 {% set disp = web %}
                                                 {% if web|length > 30 %}
@@ -92,7 +92,7 @@
                                             {% set imgcnt = 1 %}
                                             {% for iu in imageURLS %}
                                                 {% if 'http' not in iu|trim %}
-                                                    {% set iu = 'http://' ~ iu|trim %}
+                                                    {% set iu = 'https://' ~ iu|trim %}
                                                 {% endif %}
                                                 {% set disp = iu|trim %}
                                                 {% if disp|length > 30 %}
