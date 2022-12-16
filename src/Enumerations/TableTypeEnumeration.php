@@ -46,7 +46,41 @@ class TableTypeEnumeration extends AbstractEnumeration
     const TABLEASSTMAX_LARGEBOOTH = 6;
     const TABLEASSTMAX_ENDCAP = 0;
     
-    
+    const TABLESIZE_HALF = .5;
+    const TABLESIZE_SINGLE = 1;
+    const TABLESIZE_SINGLEHALF = 1.5;
+    const TABLESIZE_DOUBLE = 2;
+    const TABLESIZE_TRIPLE = 3;
+    const TABLESIZE_QUAD = 4;
+    const TABLESIZE_QUINT = 5;
+    const TABLESIZE_SMALLBOOTH = "Small Booth";
+    const TABLESIZE_LARGEBOOTH = "Large Booth";
+    const TABLESIZE_ENDCAP = 0;
+       
+    public static function getSize($type)
+    {
+        switch(strtoupper($type)) {
+            case strtoupper(self::TABLETYPE_HALF):
+                return self::TABLESIZE_HALF;
+            case strtoupper(self::TABLETYPE_SINGLE):
+                return self::TABLESIZE_SINGLE;
+            case strtoupper(self::TABLETYPE_SINGLEHALF):
+                return self::TABLESIZE_SINGLEHALF;
+            case strtoupper(self::TABLETYPE_DOUBLE):
+                return self::TABLESIZE_DOUBLE;
+            case strtoupper(self::TABLETYPE_TRIPLE):
+                return self::TABLESIZE_TRIPLE;
+            case strtoupper(self::TABLETYPE_QUAD):
+                return self::TABLESIZE_QUAD;
+            case strtoupper(self::TABLETYPE_QUINT):
+                return self::TABLESIZE_QUINT;
+            case strtoupper(self::TABLETYPE_SMALLBOOTH):
+                return self::TABLESIZE_SMALLBOOTH;
+            case strtoupper(self::TABLETYPE_LARGEBOOTH):
+                return self::TABLESIZE_LARGEBOOTH;
+        }
+        return 0;
+    }
     /**
      * @param $type
      * @return int

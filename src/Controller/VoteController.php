@@ -8,6 +8,7 @@ use App\Entity\Vendor;
 use App\Entity\VoteEvent;
 use App\Entity\VoteItem;
 use App\Enumerations\ActionEnumeration;
+use App\Enumerations\TableTypeEnumeration;
 use App\Enumerations\VendorStatusEnumeration;
 use App\Enumerations\VoteEventStatusEnumeration;
 use App\Exceptions\BadFormDataException;
@@ -241,14 +242,30 @@ class VoteController extends AbstractController
         $vendors = $entityManager->getRepository(Vendor::class)->findAll();
         $voteEventID = $request->query->get('voteevent');
         $approved = 0;
+        $tablespaces = 0;
+        $smbooths = 0;
+        $lgbooths = 0;
         /**
          * @var Vendor $vendor
          */
         foreach ($vendors as $vendor) {
             if ($vendor->getStatus() === VendorStatusEnumeration::STATUS_APPROVED) {
                 $approved++;
+                $table = $vendor->getTableScore();
+                switch ($table) {
+                    case TableTypeEnumeration::TABLESIZE_SMALLBOOTH:
+                        $smbooths++;
+                        break;
+                    case TableTypeEnumeration::TABLESIZE_LARGEBOOTH:
+                        $lgbooths++;
+                        break;
+                    default:
+                        $tablespaces += $table;
+                        break;
+                }
             }
         }
+
 
         $criteria = new Criteria();
         $criteria->where(Criteria::expr()->neq('status', VendorStatusEnumeration::STATUS_APPROVED));
@@ -330,6 +347,9 @@ class VoteController extends AbstractController
             'vendors' => $vendors,
             'event' => $voteEvent,
             'preapproved' => $approved,
+            'tables' => $tablespaces,
+            'lgbooth' => $lgbooths,
+            'smbooth' => $smbooths,
             'approveform' => $form->createView()
         ]);
 

@@ -224,8 +224,8 @@ div.carousel-item {
 
 #score-reporting-float {
     position: fixed;
-    width: 150px;
-    height: 200px;
+    width: 300px;
+    height: 300px;
     right: 20px;
     bottom: 50px;
     border: 1px solid #000000;
@@ -246,16 +246,25 @@ div.carousel-item {
 }
 
 #report-window {
-    position: relative;
     height: 120px;
     font-size: 60pt;
 }
 
+#report-table {
+    padding-top: 20px;
+    height: 120px;
+    font-size: 12pt;
+    color: var(--primary);
+}
+
+
 #report-hover {
-    position: absolute;
-    z-index: 200;
-    bottom: 60px;
-    left: 30px;
+    color: #87A4A9;
+    font-size: 12pt;
+}
+
+
+#report-table-hover {
     color: #87A4A9;
     font-size: 12pt;
 }

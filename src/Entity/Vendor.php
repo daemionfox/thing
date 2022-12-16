@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enumerations\TableTypeEnumeration;
 use App\Enumerations\VendorStatusEnumeration;
 use App\Repository\VendorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -540,6 +541,11 @@ class Vendor
         }
         $this->setEventScore($total);
         return $this;
+    }
+
+    public function getTableScore()
+    {
+        return TableTypeEnumeration::getSize($this->tableRequestType);
     }
 
 }

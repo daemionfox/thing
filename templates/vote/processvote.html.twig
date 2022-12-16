@@ -22,21 +22,42 @@
             <div class="card-body">
                 <div class="row mb-3">
                     <div class="col-2"><h3>Score</h3></div>
-                    <div class="col-10"><h3>Vendor</h3></div>
+                    <div class="col-5"><h3>Vendor</h3></div>
+                    <div class="col-5"><h3>Table</h3></div>
                 </div>
 
 
                 {% for v in vendors %}
                     <div class="row vote-process mb-3">
-                        <div class="col-2"><button class="btn btn-outline-secondary fa-2x process-check" data-score="{{ v.eventScore }}">{{ v.eventScore }}</button></div>
-                        <div class="col-10">{{ v.name }}</div>
+                        <div class="col-2"><button class="btn btn-outline-secondary fa-2x process-check" data-score="{{ v.eventScore }}" data-table="{{ v.tableScore }}">{{ v.eventScore }}</button></div>
+                        <div class="col-5">{{ v.name }}</div>
+                        <div class="col-5">{{ v.tableRequestType }}</div>
                     </div>
                 {% endfor %}
             </div>
         </div>
         <div id="score-reporting-float" class="container">
-            <div class="row text-center"><div class="col"># Vendors</div></div>
-            <div class="row text-center"><div id="report-window" class="col">{{ preapproved }}</div><div id="report-hover"></div></div>
+            <div class="row"><div class="col text-center"><h3># Vendors</h3></div></div>
+            <div class="row">
+                <div id="report-window" class="col-6 text-center align-middle">{{ preapproved }}</div>
+                <div id="report-table" class="col-6 align-middle">
+                    <div>
+                        <span id="spaces-table">{{ tables }}</span> Table Spaces<br/>
+                        <span id="spaces-lgbooth">{{ lgbooth }}</span> Large Booths<br/>
+                        <span id="spaces-smbooth">{{ smbooth }}</span> Small Booths<br/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div id="report-hover" class="col-6 text-center">{{ preapproved }}</div>
+                <div id="report-table-hover" class="col-6 align-middle">
+                    <div>
+                        <span id="hover-table">{{ tables }}</span> Table Spaces<br/>
+                        <span id="hover-lgbooth">{{ lgbooth }}</span> Large Booths<br/>
+                        <span id="hover-smbooth">{{ smbooth }}</span> Small Booths<br/>
+                    </div>
+                </div>
+            </div>
             {{  form_start(approveform) }}
             {{ form_row(approveform.voteevent) }}
             {{ form_row(approveform.approved) }}

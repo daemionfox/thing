@@ -22,19 +22,37 @@ $(document).ready(function(){
         event.preventDefault();
         let bottomScore = $(this).data('score');
         let totalVend = 0;
+        let totalTable = 0;
+        let smallTotal = 0;
+        let largeTotal = 0;
+
         let curVend = parseInt($("#approve_vendor_approved").val());
         $(".vote-process").removeClass('process-accept');
         $(".process-check").each(function(indx, item) {
             let voteproc = $(item).parents('.vote-process').first();
             let scorelocal = $(item).data('score');
+            let tableLocal = $(item).data('table');
 
             if (scorelocal >= bottomScore) {
                 voteproc.addClass('process-accept');
                 totalVend++;
+                if (tableLocal === "Large Booth") {
+                    largeTotal++;
+                } else if (tableLocal === "Small Booth") {
+                    smallTotal++
+                } else {
+                    totalTable += tableLocal;
+                }
             }
 
         });
+
+
+
         $("#approve_vendor_score").val(bottomScore);
+        $("#hover-table").html(totalTable);
+        $("#hover-lgbooth").html(largeTotal);
+        $("#hover-smbooth").html(smallTotal);
         $("#report-window").html(totalVend + curVend);
     });
 
@@ -43,16 +61,30 @@ $(document).ready(function(){
         let scoreButton = $(this).find('.process-check').first();
         let bottomScore = $(scoreButton).data('score');
         let totalVend = 0;
-
+        let totalTable = 0;
+        let smallTotal = 0;
+        let largeTotal = 0;
         $(".process-check").each(function(indx, item) {
             let voteproc = $(item).parents('.vote-process').first();
             let scorelocal = $(item).data('score');
+            let tableLocal = $(item).data('table');
 
             if (scorelocal >= bottomScore) {
                 totalVend++;
+                if (tableLocal === "Large Booth") {
+                    largeTotal++;
+                } else if (tableLocal === "Small Booth") {
+                    smallTotal++
+                } else {
+                    totalTable += tableLocal;
+                }
+
             }
 
         });
+        $("#hover-table").html(totalTable);
+        $("#hover-lgbooth").html(largeTotal);
+        $("#hover-smbooth").html(smallTotal);
         $("#report-hover").html(totalVend);
     }).on('mouseout', function(event){
         event.preventDefault();
