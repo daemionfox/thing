@@ -56,7 +56,7 @@
                             </div>
                             <div class="row">
                                 <div class="progress col-10 offset-1">
-                                    <div class="progress-bar {{ statusClass }} w-{{ event.calculations.percent|round }}" role="progressbar" aria-valuenow="{{ event.calculations.percent|round }}" aria-valuemax="100" aria-valuemin="0">
+                                    <div class="progress-bar {{ statusClass }}" role="progressbar" style="width: {{ event.calculations.percent|round }}%;" aria-valuenow="{{ event.calculations.percent|round }}" aria-valuemax="100" aria-valuemin="0">
                                         {{ event.calculations.current }} / {{ event.calculations.total }}
                                     </div>
                                 </div>
@@ -74,10 +74,18 @@
                                 <div class="col-10 offset-1">
                                     {% for sv in event.staffVotes  %}
                                     {% set staffPercent = 100* (sv.votes / sv.max)  %}
+                                    {% set staffBG = "bg-info" %}
+                                    {% if staffPercent <= 10 %}
+                                        {% set staffBG = "bg-danger" %}
+                                    {% elseif staffPercent <= 30 %}
+                                        {% set staffBG = "bg-warning" %}
+                                    {% elseif staffPercent == 100 %}
+                                        {% set staffBG = "bg-success" %}
+                                    {% endif %}
                                         <div class="row">
                                             <div class="col-4">{{ sv.name }}</div>
                                             <div class="col-8 progress">
-                                                <div class="progress-bar {{ statusClass }} w-{{ staffPercent|round }}" role="progressbar" aria-valuenow="{{ staffPercent }}" aria-valuemax="100" aria-valuemin="0">
+                                                <div class="progress-bar {{ statusClass }} {{ staffBG }}" role="progressbar" style="width: {{ staffPercent|round }}%;" aria-valuenow="{{ staffPercent }}" aria-valuemax="100" aria-valuemin="0">
                                                     {{ sv.votes }} / {{ sv.max }}
                                                 </div>
                                             </div>
