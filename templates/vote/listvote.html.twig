@@ -85,13 +85,10 @@
                                         <div class="row">
                                             <div class="col-4">{{ sv.name }}</div>
                                             <div class="col-8 progress">
-                                                <div class="progress-bar {{ statusClass }}" role="progressbar" style="min-width: {{ staffPercent|round }}%;" aria-valuenow="{{ staffPercent }}" aria-valuemax="100" aria-valuemin="0">
+                                                <div class="progress-bar {{ statusClass }} {{ staffBG }}" role="progressbar" style="min-width: {{ staffPercent|round }}%;" aria-valuenow="{{ staffPercent }}" aria-valuemax="100" aria-valuemin="0">
                                                     {{ sv.votes }} / {{ sv.max }}
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="progress-bar {{ statusClass }} w-{{ event.calculations.percent|round }}" role="progressbar" aria-valuenow="{{ event.calculations.percent|round }}" aria-valuemax="100" aria-valuemin="0">
-                                            {{ event.calculations.current }} / {{ event.calculations.total }}
                                         </div>
                                     {% endfor %}
                                 </div>
