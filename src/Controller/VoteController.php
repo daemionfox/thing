@@ -188,6 +188,30 @@ class VoteController extends AbstractController
             $e->isRunning = $this->voteIsActive($e);
             $e->isEnded = $this->voteIsEnded($e);
             $e->canProcess = $e->getStatus() === VoteEventStatusEnumeration::STATUS_PROCESSING;
+
+            if($e->isRunning) {
+                $staff = $entityManager->getRepository(User::class)->findAll();
+                $staffMax = $e->getStaffVotes();
+                /**
+                 * @var User $s
+                 */
+                $staffVotes = [];
+                foreach ($staff as &$s) {
+                    $ve = $s->getVoteItems();
+                    $svote = 0;
+                    /**
+                     * @var VoteItem $sitem
+                     */
+                    foreach ($ve as $sitem) {
+                        if ($sitem->getVoteEvent()->getId() === $e->getId()) {
+                            $svote += $sitem->getVotes();
+                        }
+                    }
+                    $staffVotes[] = ['name' => $s->getName(), 'votes' => $svote, 'max' => $staffMax];
+                }
+                $e->staffVotes = $staffVotes;
+            }
+
         }
 
         /**

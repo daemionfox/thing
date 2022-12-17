@@ -70,8 +70,26 @@
                                     {% endif %}
                                 </div>
                             </div>
+                            {% if event.staffVotes is defined %}
+                                <div class="col-10 offset-1">
+                                    {% for sv in event.staffVotes  %}
+                                    {% set staffPercent = 100* (sv.votes / sv.max)  %}
+                                        <div class="row">
+                                            <div class="col-4">{{ sv.name }}</div>
+                                            <div class="col-8 progress">
+                                                <div class="progress-bar {{ statusClass }} w-{{ staffPercent|round }}" role="progressbar" aria-valuenow="{{ staffPercent }}" aria-valuemax="100" aria-valuemin="0">
+                                                    {{ sv.votes }} / {{ sv.max }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="progress-bar {{ statusClass }} w-{{ event.calculations.percent|round }}" role="progressbar" aria-valuenow="{{ event.calculations.percent|round }}" aria-valuemax="100" aria-valuemin="0">
+                                            {{ event.calculations.current }} / {{ event.calculations.total }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
 
 
+                            {% endif %}
                         </div>
                     </div>
                 {% endfor %}
