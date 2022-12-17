@@ -84,8 +84,8 @@
                                     {% endif %}
                                         <div class="row">
                                             <div class="col-4">{{ sv.name }}</div>
-                                            <div class="col-8 progress {{ staffBG }}">
-                                                <div class="progress-bar {{ statusClass }}" role="progressbar" style="width: {{ staffPercent|round }}%;" aria-valuenow="{{ staffPercent }}" aria-valuemax="100" aria-valuemin="0">
+                                            <div class="col-8 progress">
+                                                <div class="progress-bar {{ statusClass }}" role="progressbar" style="min-width: {{ staffPercent|round }}%;" aria-valuenow="{{ staffPercent }}" aria-valuemax="100" aria-valuemin="0">
                                                     {{ sv.votes }} / {{ sv.max }}
                                                 </div>
                                             </div>
