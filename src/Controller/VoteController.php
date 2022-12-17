@@ -209,6 +209,9 @@ class VoteController extends AbstractController
                     }
                     $staffVotes[] = ['name' => $s->getName(), 'votes' => $svote, 'max' => $staffMax];
                 }
+                usort($staffVotes, function($a, $b){
+                   return strcmp($a->name, $b->name);
+                });
                 $e->staffVotes = $staffVotes;
             }
 
