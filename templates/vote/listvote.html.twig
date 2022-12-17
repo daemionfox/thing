@@ -42,7 +42,7 @@
                         <div class="col-12">
                             <div class="row">
                                 <div class="col-8">
-                                    <h3>{{ event.Name }}</h3>
+                                    <h3>{{ event.Name }}      [{{ event.calculations.current }} / {{ event.calculations.total }}]</h3>
                                 </div>
                                 <div class="col-4 event-start text-end mb-3">
                                     {% if event.isRunning %}<span class="event-running">Running</span>
@@ -60,6 +60,7 @@
                                         {{ event.calculations.current }} / {{ event.calculations.total }}
                                     </div>
                                 </div>
+
                                 <div class="col-1 text-end">
                                     {% if canPlay %}
                                         <a class="btn btn-info" title="Start Vote Event Early" href="/vote/start?voteevent={{ event.id }}"><i class="fas fa-play text-white"></i></a>
