@@ -21,5 +21,6 @@ class VendorStatusEnumeration
     const STATUS_DEFERRED = 'Deferred';
     const STATUS_PASSED = 'Passed';
     const STATUS_FAILED = 'Failed';
+    const STATUS_DELETED = 'Deleted';
 
 }

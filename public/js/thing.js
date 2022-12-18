@@ -4,6 +4,11 @@ $(document).ready(function(){
     $("#vote-submit-button").on('click', function(event){
         event.preventDefault()
         $("#vote_vendor_isSkip").val(0);
+
+        let votes = $("#vote_vendor_Votes");
+        if (parseInt(votes.val()) === 0) {
+            votes.val(0);
+        }
         $("form[name=vote_vendor]").submit();
     });
 
