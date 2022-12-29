@@ -13,6 +13,17 @@ $(document).ready(function(){
     });
 
 
+    $("#vendor-list-filter").on('change', function(event){
+        console.log("Filter vendors");
+        event.preventDefault();
+        let stat = $(this).val();
+        let url = "/vendor";
+        if (stat !== "") {
+            url = "/vendor?filter=" + stat;
+        }
+        window.location.href = url;
+    })
+
     $("#vote-skip-button").on('click', function(event){
         event.preventDefault()
         if(confirm("Are you sure you want to skip this vendor?")){

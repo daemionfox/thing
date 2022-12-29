@@ -21,6 +21,17 @@
                 <h2>Vendor List</h2>
             </div>
             <div class="card-body">
+                <div class="row">
+                    <label class="col-2 offset-7 form-label text-right" for="vendor-list-filter">Status Filter:</label>
+                    <div class="col-3">
+                        <select id="vendor-list-filter" class="form-control">
+                            <option value="">No Filter</option>
+                            {% for k,v in status %}
+                                <option value="{{ v }}" {% if v == filter %}selected{% endif %}>{{ k }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
                 <table class="table table-list table-striped">
                     <thead>
                     <tr>
@@ -65,6 +76,9 @@
                     </tbody>
                 </table>
                 <div class="navigation">{{ knp_pagination_render(vendors) }}</div>
+                {% if "ROLE_EDITVENDOR" in user.roles %}
+                    <div class="download mt-3"><a class="btn btn-secondary" href="/vendor/getlist?filter={{ filter }}"><i class="far fa-download"></i> Download Vendor List</a></div>
+                {% endif %}
             </div>
         </div>
     </div>

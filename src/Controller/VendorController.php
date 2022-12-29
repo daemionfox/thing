@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Entity\Vendor;
 use App\Entity\VendorImage;
 use App\Enumerations\ActionEnumeration;
+use App\Enumerations\VendorStatusEnumeration;
 use App\Exceptions\DownloadException;
 use App\Form\ScrubVendorsType;
 use App\Form\VendorFormType;
@@ -16,6 +17,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use HeadlessChromium\BrowserFactory;
 use HeadlessChromium\Page;
 use Knp\Component\Pager\PaginatorInterface;
+use League\Csv\Writer;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,6 +25,8 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -53,12 +57,17 @@ class VendorController extends AbstractController
          */
         $user = $this->getUser();
 
+        $filter = $request->query->get('filter');
+
+
         return $this->render('vendor/index.html.twig', [
             'user' => [
                 'name' => $user->getName(),
                 'roles' => $user->getRoles()
             ],
-            'vendors' => $paginator->paginate($this->getVendorList(), $request->query->getInt('page', 1), 50)
+            'vendors' => $paginator->paginate($this->getVendorList($filter), $request->query->getInt('page', 1), 50),
+            'status' => VendorStatusEnumeration::getList(),
+            'filter' => $filter
         ]);
     }
 
@@ -203,12 +212,71 @@ class VendorController extends AbstractController
         ]);
     }
 
+    #[Route('/vendor/getlist', name: "app_downloadvendorlist")]
+    public function downloadFilteredList(Request $request, EntityManagerInterface $entityManager, ManagerRegistry $doctrine): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('ROLE_EDITVENDOR');
+
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+
+        $filter = $request->query->get('filter');
+        $vendors = $this->getVendorList($filter);
+
+        usort($vendors, function($a, $b){
+            return $a->getName() <=> $b->getName();
+        });
+
+        $csv = [
+            [
+                'Name',
+                'Contact',
+                'Email',
+                'Table Requested',
+                'Status'
+            ]
+        ];
+
+        /**
+         * @var Vendor $v
+         */
+        foreach ($vendors as $v) {
+            $temp = [
+                $v->getName(),
+                $v->getVendorContact()->getFirstName() . " " . $v->getVendorContact()->getLastName(),
+                $v->getVendorContact()->getEmailAddress(),
+                $v->getTableRequestType(),
+                $v->getStatus()
+            ];
+            $csv[] = $temp;
+        }
+        $writer = Writer::createFromString();
+        $writer->insertAll($csv);
+        $output = $writer->toString();
+        $response = new Response($output);
+
+        $disp = HeaderUtils::makeDisposition(
+            HeaderUtils::DISPOSITION_ATTACHMENT,
+            "dealerslist_" . strtolower($filter) . "_" . date("Ymd-his") . ".csv"
+        );
+        $response->headers->set('Content-Disposition', $disp);
+        return $response;
+
+    }
+
     /**
      * @return array
      */
-    protected function getVendorList(): array
+    protected function getVendorList($filter = null): array
     {
-        $vendors = $this->doctrine->getRepository(Vendor::class) ->findAll();
+        if (empty($filter)) {
+            $vendors = $this->doctrine->getRepository(Vendor::class) ->findAll();
+        } else {
+            $vendors = $this->doctrine->getRepository(Vendor::class) ->findBy(['status' => $filter]);
+        }
         return $vendors;
     }
 
