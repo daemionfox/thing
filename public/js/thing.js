@@ -12,18 +12,6 @@ $(document).ready(function(){
         $("form[name=vote_vendor]").submit();
     });
 
-
-    $("#vendor-list-filter").on('change', function(event){
-        console.log("Filter vendors");
-        event.preventDefault();
-        let stat = $(this).val();
-        let url = "/vendor";
-        if (stat !== "") {
-            url = "/vendor?filter=" + stat;
-        }
-        window.location.href = url;
-    })
-
     $("#vote-skip-button").on('click', function(event){
         event.preventDefault()
         if(confirm("Are you sure you want to skip this vendor?")){
@@ -146,6 +134,7 @@ function loadChart(target)
     let canvas = $("#" + target);
     let dataurl = canvas.data('url');
     let datatype = canvas.data('charttype');
+    let status = canvas.data('status');
 
     $.get(
         dataurl,
@@ -161,9 +150,17 @@ function loadChart(target)
             options: {
                 legend: {
                     position: 'left'
+                },
+                onClick: function (e, activeEls) {
+                    let datasetIndex = activeEls[0].datasetIndex;
+                    let dataIndex = activeEls[0]._index;
+                    let cate = this.legend.legendItems[dataIndex].text;
+                    window.location = "/vendor?filter_status=" + status + "&filter_category=" + cate;
                 }
             }
         });
+
+
     }).fail(function(data){
         alert("Problem: " + data);
     });

@@ -6,8 +6,10 @@ use App\Command\VendorImageDownloadCommand;
 use App\Entity\Action;
 use App\Entity\User;
 use App\Entity\Vendor;
+use App\Entity\VendorCategory;
 use App\Entity\VendorImage;
 use App\Enumerations\ActionEnumeration;
+use App\Enumerations\VendorCategoryEnumeration;
 use App\Enumerations\VendorStatusEnumeration;
 use App\Exceptions\DownloadException;
 use App\Form\ScrubVendorsType;
@@ -57,9 +59,13 @@ class VendorController extends AbstractController
          */
         $user = $this->getUser();
 
-        $filter = $request->query->get('filter');
+        $filter = [
+            'status' => $request->query->get('filter_status'),
+            'category' => $request->query->get('filter_category')
+        ]
+        ;
 
-
+//        dd($filter);
         return $this->render('vendor/index.html.twig', [
             'user' => [
                 'name' => $user->getName(),
@@ -67,6 +73,7 @@ class VendorController extends AbstractController
             ],
             'vendors' => $paginator->paginate($this->getVendorList($filter), $request->query->getInt('page', 1), 50),
             'status' => VendorStatusEnumeration::getList(),
+            'category' => VendorCategoryEnumeration::getList(),
             'filter' => $filter
         ]);
     }
@@ -223,7 +230,12 @@ class VendorController extends AbstractController
          */
         $user = $this->getUser();
 
-        $filter = $request->query->get('filter');
+
+        $filter = [
+            'status' => $request->query->get('filter_status'),
+            'category' => $request->query->get('filter_category')
+        ]
+        ;
         $vendors = $this->getVendorList($filter);
 
         usort($vendors, function($a, $b){
@@ -258,9 +270,12 @@ class VendorController extends AbstractController
         $output = $writer->toString();
         $response = new Response($output);
 
+        $stat = !empty($filter['status']) ? "_{$filter['status']}" : "";
+        $cat = !empty($filter['category']) ? "_{$filter['category']}" : "";
+
         $disp = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,
-            "dealerslist_" . strtolower($filter) . "_" . date("Ymd-his") . ".csv"
+            "dealerslist" . strtolower(str_replace(" ", "", $stat)) . strtolower(str_replace(" ", "", $cat)) . "_" . date("Ymd-his") . ".csv"
         );
         $response->headers->set('Content-Disposition', $disp);
         return $response;
@@ -272,12 +287,32 @@ class VendorController extends AbstractController
      */
     protected function getVendorList($filter = null): array
     {
-        if (empty($filter)) {
-            $vendors = $this->doctrine->getRepository(Vendor::class) ->findAll();
+        if (empty($filter['status'])) {
+            $vendors = $this->doctrine->getRepository(Vendor::class)->findAll();
         } else {
-            $vendors = $this->doctrine->getRepository(Vendor::class) ->findBy(['status' => $filter]);
+            $vendors = $this->doctrine->getRepository(Vendor::class)->findBy(['status' => $filter['status']]);
         }
-        return $vendors;
+        if(empty($filter['category'])) {
+            return $vendors;
+        }
+        $output = [];
+        /**
+         * @var Vendor $v
+         */
+        foreach ($vendors as $v) {
+            $cats = $v->getVendorCategories();
+            /**
+             * @var VendorCategory $c
+             */
+            foreach ($cats as $c) {
+                if ($c->getCategory() === $filter['category'] && $c->isIsPrimary() === true) {
+                    $output[] = $v;
+                }
+            }
+        }
+
+
+        return $output;
     }
 
 

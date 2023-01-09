@@ -23,13 +23,13 @@
                     {% if vendorCount > 0 %}
                         <div class="row">
                             <h3>Vendor Categories (All Applied)</h3>
-                            <canvas id="allVendorDetails" class="pie" data-charttype="pie" data-url="/chart/vendors/all"></canvas>
+                            <canvas id="allVendorDetails" class="pie" data-charttype="pie" data-url="/chart/vendors/all" data-status=""></canvas>
                         </div>
                     {% endif %}
                     {% if vendorApproved > 0 %}
                         <div class="row">
                             <h3>Vendor Categories (All Approved)</h3>
-                            <canvas id="approvedVendorDetails" class="pie" data-charttype="pie" data-url="/chart/vendors/approved"></canvas>
+                            <canvas id="approvedVendorDetails" class="pie" data-charttype="pie" data-url="/chart/vendors/approved" data-status="approved"></canvas>
                         </div>
                     {% endif %}
                 </div>
