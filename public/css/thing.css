@@ -79,8 +79,6 @@ body {
 }
 
 .status {
-    border-radius: 100px;
-    border: 1px solid var(--dark);
     padding: .25em;
     text-align: center !important;
     vertical-align: middle !important;
@@ -276,4 +274,8 @@ div.carousel-item {
 
 #dashboard-screen .card-body .row {
     border-bottom: 1px solid var(--primary-alt);
+}
+
+.report:nth-child(odd) {
+    background-color: rgba(0,0,0,.15);
 }

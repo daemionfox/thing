@@ -15,8 +15,17 @@
         <div class="card col-12" id="vendor-view-screen">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-9"><h1 class="mb-3 font-weight-normal">{{ vendor.name }}</h1></div>
-                    <div class="col-3"><div class="py-1 px-3 float-end status status-{{ vendor.status|lower }}">{{ vendor.status }}</div></div>
+                    <div class="col-8"><h1 class="mb-3 font-weight-normal">{{ vendor.name }}</h1></div>
+                    <div class="col-4">
+                        <div class="py-1 px-3 float-end status status-{{ vendor.status|lower }} ">
+                            {{ form_start(vendorStatusForm) }}
+                                <div class="input-group">
+                                    {{ form_widget(vendorStatusForm.status, {value: vendor.status}) }}
+                                    {{ form_widget(vendorStatusForm.submit) }}
+                                </div>
+                            {{ form_end(vendorStatusForm) }}
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-8 vendor-view">

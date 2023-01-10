@@ -9,10 +9,12 @@ use App\Entity\Vendor;
 use App\Entity\VendorCategory;
 use App\Entity\VendorImage;
 use App\Enumerations\ActionEnumeration;
+use App\Enumerations\TableTypeEnumeration;
 use App\Enumerations\VendorCategoryEnumeration;
 use App\Enumerations\VendorStatusEnumeration;
 use App\Exceptions\DownloadException;
 use App\Form\ScrubVendorsType;
+use App\Form\UpdateVendorStatusType;
 use App\Form\VendorFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -61,7 +63,8 @@ class VendorController extends AbstractController
 
         $filter = [
             'status' => $request->query->get('filter_status'),
-            'category' => $request->query->get('filter_category')
+            'category' => $request->query->get('filter_category'),
+            'table' => $request->query->get('filter_table')
         ]
         ;
 
@@ -74,6 +77,7 @@ class VendorController extends AbstractController
             'vendors' => $paginator->paginate($this->getVendorList($filter), $request->query->getInt('page', 1), 50),
             'status' => VendorStatusEnumeration::getList(),
             'category' => VendorCategoryEnumeration::getList(),
+            'table' => TableTypeEnumeration::getList(),
             'filter' => $filter
         ]);
     }
@@ -109,20 +113,40 @@ class VendorController extends AbstractController
     #[Route('/vendor/view', name: 'app_viewvendor')]
     public function viewvendor(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $user = $this->getUser();
 
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+
+        $user = $this->getUser();
+        $form = $this->createForm(UpdateVendorStatusType::class);
+        $form->handleRequest($request);
         $vendorID = $request->query->get('vendor', '');
         if (empty($vendorID)) {
             return new RedirectResponse("/vendor");
         }
+        /**
+         * @var Vendor $vendor
+         */
         $vendor = $entityManager->getRepository(Vendor::class)->find($vendorID);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Woohoo!
+            $status = $form->get('status')->getData();
+            $vendor->setStatus($status);
+            $entityManager->persist($vendor);
+
+        }
+
+
+
+
         return $this->render("vendor/view.html.twig", [
             'vendor' => $vendor,
             'user' => [
                 'name' => $user->getName(),
                 'roles' => $user->getRoles()
-            ]
+            ],
+            'vendorStatusForm' => $form->createView()
         ]);
 
     }
@@ -233,7 +257,8 @@ class VendorController extends AbstractController
 
         $filter = [
             'status' => $request->query->get('filter_status'),
-            'category' => $request->query->get('filter_category')
+            'category' => $request->query->get('filter_category'),
+            'table' => $request->query->get('filter_table')
         ]
         ;
         $vendors = $this->getVendorList($filter);
@@ -272,10 +297,11 @@ class VendorController extends AbstractController
 
         $stat = !empty($filter['status']) ? "_{$filter['status']}" : "";
         $cat = !empty($filter['category']) ? "_{$filter['category']}" : "";
+        $tab = !empty($filter['table']) ? "_{$filter['table']}" : "";
 
         $disp = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,
-            "dealerslist" . strtolower(str_replace(" ", "", $stat)) . strtolower(str_replace(" ", "", $cat)) . "_" . date("Ymd-his") . ".csv"
+            "dealerslist" . strtolower(str_replace(" ", "", $stat)) . strtolower(str_replace(" ", "", $cat)) . strtolower(str_replace(" ", "", $tab)) . "_" . date("Ymd-his") . ".csv"
         );
         $response->headers->set('Content-Disposition', $disp);
         return $response;

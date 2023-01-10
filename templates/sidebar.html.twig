@@ -7,7 +7,11 @@
     {% if 'ROLE_CREATEVOTE' in user.roles %}
         <div class="sidebar-item m-0 p-3"><a href="/vote/create"><i class="fas fa-poll-h"></i> Create Vote</a></div>
         <div class="sidebar-item m-0 p-3"><a href="/vote/list"><i class="fas fa-poll-people"></i> List Vote Events</a></div>
+
     {% endif %}
+
+
+    <div class="sidebar-item m-0 p-3"><a href="/reports"><i class="fas fa-file-chart-pie"></i> Reports</a></div>
 
 
     <!-- Staff -->
@@ -17,12 +21,12 @@
     {% endif %}
 
     <!-- Dealer's Room -->
-
+<!--
     <div class="sidebar-item m-0 p-3"><a href="#" class="link-secondary"><i class="fas fa-store"></i> Dealer's Room Layout</a></div>
     {% if 'ROLE_EDITROOM' in user.roles %}
         <div class="sidebar-item m-0 p-3"><a href="#" class="link-secondary"><i class="fas fa-digging"></i> Create Room Layout</a></div>
     {% endif %}
-
+-->
 
     <!-- Vendors -->
     <div class="sidebar-item m-0 p-3"><a href="/vendor"><i class="fas fa-clipboard-list"></i> List Vendors</a></div>

@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vendors{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' with user %}
+{% endblock %}
+{% block sidebar %}
+    {% include 'sidebar.html.twig' with user %}
+{% endblock %}
+{% block body %}
+<div class="card my-3 col-8 offset-2" id="reports-screen">
+    <div class="card-header">
+        <h2>Reports</h2>
+    </div>
+    <div class="card-body">
+        <div class="row mb-3"><h3>Vendors</h3></div>
+        <div class="row mb-3 py-1 report">
+            <div class="col-8 offset-1">Approved List</div>
+            <div class="col-3">
+                <a class="btn btn-secondary btn-lg" href="/vendor/getlist?filter_status=Approved"><i class="far fa-download"></i></a>
+            </div>
+        </div>
+        <div class="row mb-3 py-1 report">
+            <div class="col-8 offset-1">Not-Approved List</div>
+            <div class="col-3">
+                <a class="btn btn-secondary btn-lg" href="/vendor/getlist?filter_status=Not+Approved"><i class="far fa-download"></i></a>
+            </div>
+        </div>
+        <div class="row my-3"><h3>Votes</h3></div>
+        <div class="row mb-3 py-1 report">
+            <div class="col-8 offset-1">Vendor Voting Breakdown</div>
+            <div class="col-3">
+                <a class="btn btn-secondary btn-lg" href="/reports/votebreakdown"><i class="far fa-download"></i></a>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+{% endblock %}
