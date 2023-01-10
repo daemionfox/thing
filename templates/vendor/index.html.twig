@@ -23,7 +23,7 @@
             <div class="card-body">
                 <form method="get" action="/vendor">
                 <div class="row">
-                    <div class="col-3 offset-1">
+                    <div class="col-3 offset-5">
                         <div class="row"><label for="vendor-list-status-filter">Status Filter:</label></div>
                         <div class="row">
                             <select id="vendor-list-status-filter" name="filter_status" class="form-control vendor-filter" data-filter="status">
@@ -45,31 +45,23 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-3">
-                        <div class="row"><label for="vendor-list-table-filter">Table Filter:</label></div>
-                        <div class="row">
-                            <select id="vendor-list-table-filter" name="table" class="form-control vendor-filter" data-filter="table">
-                                <option value="">No Filter</option>
-                                {% for tk,tv in table %}
-                                    <option value="{{ tv }}" {% if  filter.table is defined and tv == filter.table %}selected{% endif %}>{{ tk }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-2">
+{#                    <div class="col-3">#}
+{#                        <div class="row"><label for="vendor-list-table-filter">Table Filter:</label></div>#}
+{#                        <div class="row">#}
+{#                            <select id="vendor-list-table-filter" name="table" class="form-control vendor-filter" data-filter="table">#}
+{#                                <option value="">No Filter</option>#}
+{#                                {% for tk,tv in table %}#}
+{#                                    <option value="{{ tv }}" {% if  filter.table is defined and tv == filter.table %}selected{% endif %}>{{ tk }}</option>#}
+{#                                {% endfor %}#}
+{#                            </select>#}
+{#                        </div>#}
+{#                    </div>#}
+                    <div class="col-1">
                         <div class="row">&nbsp;</div>
                         <div class="row">
-                            <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="far fa-filter"></i>Filter</button>
+                            <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="far fa-filter"></i></button>
                         </div>
                     </div>
-                </div>
-                    <div class="col-2">
-                        <div class="row">&nbsp;</div>
-                        <div class="row">
-                            <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="far fa-filter"></i>Filter</button>
-                        </div>
-                    </div>
-
                 </div>
 
                 </form>

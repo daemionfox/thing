@@ -1,10 +1,16 @@
 [
   {
-    "createdon": "2023-01-08 22:20:00",
-    "subject": "New Filter",
+    "createdon": "2023-01-09 19:00:00",
+    "subject": "Reports & Status",
     "type": "feature",
-    "message": "Added category filter to vendor list.  Added ability to click pie-chart section to automatically filter vendor list to status/category."
+    "message": "Added reports section.  Vendor and Vote reports available.  Added status select on vendor view for individual modifications."
   },
+  {
+  "createdon": "2023-01-08 22:20:00",
+  "subject": "New Filter",
+  "type": "feature",
+  "message": "Added category filter to vendor list.  Added ability to click pie-chart section to automatically filter vendor list to status/category."
+},
   {
   "createdon": "2022-12-14 22:07:00",
   "subject": "Bug Fixes",
