@@ -135,7 +135,7 @@ class VendorController extends AbstractController
             /**
              * @var User $user
              */
-            new Action($user, 'Vendor Status Updated', "Set status of {$vendor->getName()} to {$status}", $entityManager);
+            new Action($user, ActionEnumeration::ACTION_VENDOR, "Set status of {$vendor->getName()} to {$status}", $entityManager);
             $vendor->setStatus($status);
             $entityManager->persist($vendor);
             $entityManager->flush();
@@ -161,21 +161,27 @@ class VendorController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $this->denyAccessUnlessGranted('ROLE_EDITVENDOR');
-
+        $user = $this->getUser();
         $vendorID = $request->query->get('vendor', '');
         if (empty($vendorID)) {
             return new RedirectResponse("/vendor");
         }
 
+        /**
+         * @var Vendor $vendor
+         */
         $vendor = $entityManager->getRepository(Vendor::class)->find($vendorID);
 
         $form = $this->createForm(VendorFormType::class, $vendor);
         $form->handleRequest($request);
+        /**
+         * @var User $user
+         */
         $user = $this->getUser();
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Here we do the field map.
-
+            new Action($user, ActionEnumeration::ACTION_VENDOR, "Editing vendor {$vendor->getName()} id {$vendor->getId()}");
             $entityManager->persist($vendor);
             $entityManager->flush();
 
@@ -197,9 +203,16 @@ class VendorController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $this->denyAccessUnlessGranted('ROLE_EDITVENDOR');
-
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
         $vendorID = $request->query->get('vendor', '');
+        /**
+         * @var Vendor $vendor
+         */
         $vendor = $entityManager->getRepository(Vendor::class)->find($vendorID);
+        new Action($user, ActionEnumeration::ACTION_VENDOR, "Deleting vendor {$vendor->getName()} id {$vendor->getId()}");
         $entityManager->remove($vendor);
         $entityManager->flush();
         return new RedirectResponse('/vendor');
