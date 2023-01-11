@@ -192,6 +192,19 @@ class VendorController extends AbstractController
 
     }
 
+    #[Route('/vendor/delete', name: "app_deletevendor")]
+    public function deletevendor(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('ROLE_EDITVENDOR');
+
+        $vendorID = $request->query->get('vendor', '');
+        $vendor = $entityManager->getRepository(Vendor::class)->find($vendorID);
+        $entityManager->remove($vendor);
+        $entityManager->flush();
+        return new RedirectResponse('/vendor');
+    }
+
     #[Route('/vendor/scrub', name: "app_scrubvendors")]
     public function scrubvendors(Request $request, EntityManagerInterface $entityManager, ManagerRegistry $doctrine): Response
     {

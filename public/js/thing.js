@@ -21,6 +21,14 @@ $(document).ready(function(){
         }
     });
 
+    $(".vendor-delete").on('click', function(event){
+       event.preventDefault();
+       let vid = $(this).data('vendorid');
+       let vname = $(this).data('vendname');
+       if (confirm("Do you want to delete " + vname + " id of " + vid + "?")) {
+           window.location = '/vendor/delete?vendor=' + vid;
+       }
+    });
 
     $(".process-check").on('click', function(event){
         event.preventDefault();
