@@ -2,10 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Action;
+use App\Entity\User;
 use App\Entity\Vendor;
 use App\Entity\VendorAddress;
 use App\Entity\VendorCategory;
 use App\Entity\VendorContact;
+use App\Enumerations\ActionEnumeration;
 use App\Enumerations\RegFoxHeaderEnumeration;
 use App\Enumerations\TableTypeEnumeration;
 use App\Enumerations\VendorCategoryEnumeration;
@@ -61,10 +64,14 @@ class VendorImportController extends AbstractController
 
         $form = $this->createForm(VendorImportFormType::class);
         $form->handleRequest($request);
+        /**
+         * @var User $user
+         */
         $user = $this->getUser();
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Here we do the field map.
+            new Action($user, ActionEnumeration::ACTION_VENDOR, "Import of vendors via CSV", $this->doctrine);
             return $this->runImport($request, $form);
         }
 
