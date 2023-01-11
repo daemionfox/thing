@@ -132,6 +132,10 @@ class VendorController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // Woohoo!
             $status = $form->get('status')->getData();
+            /**
+             * @var User $user
+             */
+            $action = new Action($user, 'Vendor Status Updated', "Set status of {$vendor->getName()} to {$status}", $entityManager);
             $vendor->setStatus($status);
             $entityManager->persist($vendor);
 
