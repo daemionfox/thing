@@ -18,12 +18,16 @@
                     <div class="col-8"><h1 class="mb-3 font-weight-normal">{{ vendor.name }}</h1></div>
                     <div class="col-4">
                         <div class="py-1 px-3 float-end status status-{{ vendor.status|lower }} ">
-                            {{ form_start(vendorStatusForm) }}
-                                <div class="input-group">
-                                    {{ form_widget(vendorStatusForm.status, {value: vendor.status}) }}
-                                    {{ form_widget(vendorStatusForm.submit) }}
-                                </div>
-                            {{ form_end(vendorStatusForm) }}
+                            {% if 'ROLE_EDITVENDOR' in user.roles %}
+                                {{ form_start(vendorStatusForm) }}
+                                    <div class="input-group">
+                                        {{ form_widget(vendorStatusForm.status, {value: vendor.status}) }}
+                                        {{ form_widget(vendorStatusForm.submit) }}
+                                    </div>
+                                {{ form_end(vendorStatusForm) }}
+                            {% else %}
+                                <div>{{ vendor.status }}</div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
