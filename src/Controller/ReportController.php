@@ -71,7 +71,8 @@ class ReportController extends AbstractController
             'Contact',
             'Email',
             'Table Requested',
-            'Status'
+            'Status',
+            'Total Votes'
         ];
         /**
          * @var VoteEvent $voteEvent
@@ -88,7 +89,7 @@ class ReportController extends AbstractController
          * @var Vendor $v
          */
         foreach ($vendors as $v) {
-            $votes = [];
+            $votes = ['Total Votes' => 0];
             foreach ($voteEvents as $ve) {
                 /**
                  * @var VoteEvent $ve
@@ -101,6 +102,7 @@ class ReportController extends AbstractController
                      */
                     $vsum += $vi->getVotes();
                 }
+                $votes['Total Votes'] += $vsum;
                 $votes[$ve->getName()] = $vsum;
             }
             $temp = [
@@ -108,7 +110,8 @@ class ReportController extends AbstractController
                 $v->getVendorContact()->getFirstName() . " " . $v->getVendorContact()->getLastName(),
                 $v->getVendorContact()->getEmailAddress(),
                 $v->getTableRequestType(),
-                $v->getStatus()
+                $v->getStatus(),
+                $votes['Total Votes']
             ];
             foreach ($voteEvents as $ve) {
                 /**
