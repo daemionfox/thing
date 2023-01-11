@@ -181,7 +181,7 @@ class VendorController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Here we do the field map.
-            new Action($user, ActionEnumeration::ACTION_VENDOR, "Editing vendor {$vendor->getName()} id {$vendor->getId()}");
+            new Action($user, ActionEnumeration::ACTION_VENDOR, "Editing vendor {$vendor->getName()} id {$vendor->getId()}", $entityManager);
             $entityManager->persist($vendor);
             $entityManager->flush();
 
@@ -212,7 +212,7 @@ class VendorController extends AbstractController
          * @var Vendor $vendor
          */
         $vendor = $entityManager->getRepository(Vendor::class)->find($vendorID);
-        new Action($user, ActionEnumeration::ACTION_VENDOR, "Deleting vendor {$vendor->getName()} id {$vendor->getId()}");
+        new Action($user, ActionEnumeration::ACTION_VENDOR, "Deleting vendor {$vendor->getName()} id {$vendor->getId()}", $entityManager);
         $entityManager->remove($vendor);
         $entityManager->flush();
         return new RedirectResponse('/vendor');
