@@ -135,10 +135,10 @@ class VendorController extends AbstractController
             /**
              * @var User $user
              */
-            $action = new Action($user, 'Vendor Status Updated', "Set status of {$vendor->getName()} to {$status}", $entityManager);
+            new Action($user, 'Vendor Status Updated', "Set status of {$vendor->getName()} to {$status}", $entityManager);
             $vendor->setStatus($status);
             $entityManager->persist($vendor);
-
+            $entityManager->flush();
         }
 
 
