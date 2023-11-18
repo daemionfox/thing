@@ -38,6 +38,12 @@
                 </div>
 
                 <div class="row mb-3">
+                    {{ form_label(createvoteForm.TableCategory) }}
+                    <div class="col-4">{{ form_widget(createvoteForm.TableCategory) }}</div>
+                    <div class="col-6">{{ form_help(createvoteForm.TableCategory) }}</div>
+                </div>
+
+                <div class="row mb-3">
                     <div class="col-6 text-center">
                         <button class="btn btn-lg btn-primary" type="submit">Create Vote Event</button>
                     </div>

@@ -6,40 +6,26 @@ namespace App\Enumerations;
 use App\Traits\EnumerationGetTrait;
 use Eloquent\Enumeration\AbstractEnumeration;
 
-class RegFoxHeaderEnumeration extends AbstractEnumeration
+class RegFoxHeaderEnumeration2023 extends AbstractEnumeration
 {
     use EnumerationGetTrait;
 
     private $constprefix = 'REGFOX_';
     private $labelprefix = 'REGFOX_';
-/*
-Phone Number
 
-Products or Services Sold
-Dealership Setup Photographs
-Website
-Twitter
-Seating Requests
-Neighbor Requests
-Other Requests/Info
-*/
-    
-    
-const REGFOX_REGID = "Registrant ID";
+    const REGFOX_REGID = "Registrant ID";
     const REGFOX_DEALERAPPSTATUS = "Dealer Application Status";
     const REGFOX_DEALERSTATUS = "Dealer Status";
     const REGFOX_DEALERSTATUSAMOUNT = "Dealer Status (Amount)";
-    const REGFOX_FIRSTNAME = "Name (As shown on registrant's ID) (First Name)";
-    const REGFOX_LASTNAME = "Name (As shown on registrant's ID) (Last Name)";
-    const REGFOX_MIDDLEINIT = "Name (As shown on registrant's ID) (M.I.)";
+    const REGFOX_FIRSTNAME = "Name (As shown on your ID) (First Name)";
+    const REGFOX_LASTNAME = "Name (As shown on your ID) (Last Name)";
+    const REGFOX_MIDDLEINIT = "Name (As shown on your ID) (M.I.)";
     const REGFOX_PREFERREDNAME = "Preferred Name";
     const REGFOX_BADGENAME = "Badge Name";
     const REGFOX_EMAIL = "Email";
     const REGFOX_DEALERNAME = "Dealership Name/Title";
     const REGFOX_TAXID = "Pennsylvania Tax ID (Revenue ID from PA-100 form)";
     const REGFOX_DEALERRATING = "Dealership Rating";
-    const REGFOX_MATUREDEALERS = 'Mature Dealers Section (Are you interested in being placed in the Mature Dealers Section?)';
-
     const REGFOX_PRIMARYCATEGORY = "Primary Dealership Category";
     const REGFOX_SECONDARYCATEGORY_ACCESSORIES = "Secondary Dealership Category (Select all that apply) (Accessories / Jewelry)";
     const REGFOX_SECONDARYCATEGORY_ARTWORK = "Secondary Dealership Category (Select all that apply) (Artwork (Originals / Prints / Commissions))";
@@ -61,29 +47,26 @@ const REGFOX_REGID = "Registrant ID";
     const REGFOX_SEATINGREQUESTS = "Seating Requests";
     const REGFOX_NEIGHBORREQUESTS = "Neighbor Requests";
     const REGFOX_OTHERREQUESTS = "Other Requests/Info";
-const REGFOX_TABLE_HALF = "Half Table";
-const REGFOX_TABLE_SINGLE = "Single Table";
-const REGFOX_TABLE_SINGLEHALF = "Single+Half Table";
-const REGFOX_TABLE_DOUBLE = "Double Table";
-const REGFOX_TABLE_TRIPLE = "Triple Table";
-const REGFOX_TABLE_QUAD = "Quad Table";
-const REGFOX_TABLE_QUINT = "Quint Table";
-const REGFOX_TABLE_SEXTUP = "Sextuple Table With Endcap";
-const REGFOX_TABLE_SMALLBOOTH = "Small Booth";
-const REGFOX_TABLE_LARGEBOOTH = "Large Booth";
-const REGFOX_TABLE_ENDCAP = "EndCap";
-const REGFOX_TABLE_AMOUNT_HALF = "Half Table ($ Amount)";
-const REGFOX_TABLE_AMOUNT_SINGLE = "Single Table ($ Amount)";
-const REGFOX_TABLE_AMOUNT_SINGLEHALF = "Single+Half Table ($ Amount)";
-const REGFOX_TABLE_AMOUNT_DOUBLE = "Double Table ($ Amount)";
-const REGFOX_TABLE_AMOUNT_TRIPLE = "Triple Table ($ Amount)";
-const REGFOX_TABLE_AMOUNT_QUAD = "Quad Table ($ Amount)";
-const REGFOX_TABLE_AMOUNT_QUINT = "Quint Table ($ Amount)";
-const REGFOX_TABLE_AMOUNT_SEXTUP = "Sextuple Table With Endcap ($ Amount)";
-const REGFOX_TABLE_AMOUNT_SMALLBOOTH = "Small Booth ($ Amount)";
-const REGFOX_TABLE_AMOUNT_LARGEBOOTH = "Large Booth ($ Amount)";
+    const REGFOX_TABLE_HALF = "Half Table";
+    const REGFOX_TABLE_SINGLE = "Single Table";
+    const REGFOX_TABLE_SINGLEHALF = "Single+Half Table";
+    const REGFOX_TABLE_DOUBLE = "Double Table";
+    const REGFOX_TABLE_TRIPLE = "Triple Table";
+    const REGFOX_TABLE_QUAD = "Quad Table";
+    const REGFOX_TABLE_QUINT = "Quint Table";
+    const REGFOX_TABLE_SMALLBOOTH = "Small Booth";
+    const REGFOX_TABLE_LARGEBOOTH = "Large Booth";
+    const REGFOX_TABLE_ENDCAP = "EndCap";
+    const REGFOX_TABLE_AMOUNT_HALF = "Half Table (Amount)";
+    const REGFOX_TABLE_AMOUNT_SINGLE = "Single Table (Amount)";
+    const REGFOX_TABLE_AMOUNT_SINGLEHALF = "Single+Half Table (Amount)";
+    const REGFOX_TABLE_AMOUNT_DOUBLE = "Double Table (Amount)";
+    const REGFOX_TABLE_AMOUNT_TRIPLE = "Triple Table (Amount)";
+    const REGFOX_TABLE_AMOUNT_QUAD = "Quad Table (Amount)";
+    const REGFOX_TABLE_AMOUNT_QUINT = "Quint Table (Amount)";
+    const REGFOX_TABLE_AMOUNT_SMALLBOOTH = "Small Booth (Amount)";
+    const REGFOX_TABLE_AMOUNT_LARGEBOOTH = "Large Booth (Amount)";
     const REGFOX_TABLE_AMOUNT_ENDCAP = "EndCap (Amount)";
-
     const REGFOX_ASSISTANT_SINGLE = "Pay for up to 1 dealer assistant (Half and Single Table)";
     const REGFOX_ASSISTANT_SINGLEHALF = "Pay for up to 2 dealer assistants (Single+Half Table)";
     const REGFOX_ASSISTANT_DOUBLE = "Pay for up to 3 dealer assistants (Double Table)";

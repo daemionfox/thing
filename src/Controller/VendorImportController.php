@@ -157,6 +157,9 @@ class VendorImportController extends AbstractController
                     case RegFoxHeaderEnumeration::REGFOX_DEALERRATING:
                         $vendor->setRating($value);
                         break;
+                    case RegFoxHeaderEnumeration::REGFOX_MATUREDEALERS:
+                        $vendor->setMatureDealersSection($this->isBool($value));
+                        break;
                     case RegFoxHeaderEnumeration::REGFOX_PRIMARYCATEGORY:
                         $vencat = new VendorCategory();
                         $vencat->setIsPrimary(true)->setCategory(VendorCategoryEnumeration::get($value));
@@ -271,6 +274,9 @@ class VendorImportController extends AbstractController
                     case RegFoxHeaderEnumeration::REGFOX_TABLE_DOUBLE:
                         if ($this->isBool($value) === true) {
                             $vendor->setTableRequestType(TableTypeEnumeration::TABLETYPE_DOUBLE);
+                        } elseif (strtoupper($value) === "1 DOUBLE TABLE WITH ENDCAP") {
+                            $vendor->setTableRequestType(TableTypeEnumeration::TABLETYPE_DOUBLE);
+                            $vendor->setHasEndcap(true);
                         }
                         break;
                     case RegFoxHeaderEnumeration::REGFOX_TABLE_TRIPLE:
@@ -367,6 +373,7 @@ class VendorImportController extends AbstractController
         }
         $vendor->setVendorContact($vendorContact);
         $vendor->setTableAmount($tableAmount + $endcapAmount);
+        $vendor->detectTableCategory();
         return $vendor;
     }
 

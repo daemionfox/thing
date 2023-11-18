@@ -48,6 +48,9 @@ class VoteEvent
     #[ORM\Column(length: 255)]
     private ?string $status = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $TableCategory = null;
+
     public function __construct()
     {
         $this->voteItems = new ArrayCollection();
@@ -201,6 +204,18 @@ class VoteEvent
     public function setStatus(string $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getTableCategory(): ?string
+    {
+        return $this->TableCategory;
+    }
+
+    public function setTableCategory(?string $TableCategory): self
+    {
+        $this->TableCategory = $TableCategory;
 
         return $this;
     }

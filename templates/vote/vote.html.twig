@@ -24,7 +24,7 @@
         <div class="card col-12" id="register-staff-screen">
             <div class="card-header row">
                     <div class="col-11">
-                        <h1 class="h3 mb-3 font-weight-normal">Vote Machine - {{ event.Name }}</h1>
+                        <h1 class="h3 mb-3 font-weight-normal">Vote Machine - {{ event.Name }} [{{ event.TableCategory }}]</h1>
                     </div>
                     <div class="col-1">
                         <span class="fa-layers fa-fw fa-3x">
@@ -125,7 +125,7 @@
                             {{ form_start(voteForm) }}
                             {{ form_widget(voteForm.isSkip) }}
                             <div class="row vote-row">
-                                <div class="col-2"><a class="btn btn-secondary btn-block" href="/vote?vendor={{ prevID }}"><i class="fas fa-backward fa-2x" title="Previous"></i></a></div>
+                                <div class="col-2"><a class="btn btn-secondary btn-block {% if prevID is empty %}disabled{% endif %}" href="/vote?vendor={{ prevID }}"><i class="fas fa-backward fa-2x" title="Previous"></i></a></div>
                                 <div class="col-4">
                                     <div class="row">
                                         {{ form_widget(voteForm.Votes) }}
@@ -137,7 +137,7 @@
                                 <div class="col-2"><button type="submit" class="btn btn-primary btn-block" id="vote-submit-button"><i class="fas fa-vote-yea fa-2x" title="Submit Votes"></i></button></div>
                                 <div class="col-2"><button type="button" class="btn btn-warning btn-block" id="vote-skip-button"><i class="far fa-comment fa-2x" title="Skip Vendor"></i></button></div>
 
-                                <div class="col-2"><a class="btn btn-secondary btn-block" href="/vote?vendor={{ nextID }}"><i class="fas fa-forward fa-2x" title="Previous"></i></a></div>
+                                <div class="col-2"><a class="btn btn-secondary btn-block {% if nextID is empty %}disabled{% endif %}" href="/vote?vendor={{ nextID }}"><i class="fas fa-forward fa-2x" title="Next"></i></a></div>
                             </div>
                             <div id="vote-alert" class="row"></div>
                             {{ form_end(voteForm) }}

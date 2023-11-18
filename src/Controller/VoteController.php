@@ -136,7 +136,7 @@ class VoteController extends AbstractController
             if ($form->isSubmitted() && $form->isValid()) {
                 $entityManager->persist($voteItem);
                 $entityManager->flush();
-                $nextVend = $this->getPrevNextVendor($entityManager, $vendor, 1);
+                $nextVend = $this->getPrevNextVendor($entityManager, $vendor, $voteEvent,1);
                 return new RedirectResponse("/vote?vendor={$nextVend}");
             }
         } catch (BadFormDataException) {
@@ -165,8 +165,8 @@ class VoteController extends AbstractController
             'voteItem' => $voteItem,
             'remainingVotes' => $remainingVotes,
             'voteForm' => $form->createView(),
-            'prevID' => $this->getPrevNextVendor($entityManager, $vendor, -1),
-            'nextID' => $this->getPrevNextVendor($entityManager, $vendor, 1)
+            'prevID' => $this->getPrevNextVendor($entityManager, $vendor, $voteEvent, -1),
+            'nextID' => $this->getPrevNextVendor($entityManager, $vendor, $voteEvent, 1)
         ]);
 
     }
@@ -440,6 +440,7 @@ class VoteController extends AbstractController
     {
         $allItems = $user->getVoteItems();
         $voteEventId = $voteEvent->getId();
+        $category = $voteEvent->getTableCategory();
         $tempItems = [];
         $voteItems = [];
         /**
@@ -459,6 +460,9 @@ class VoteController extends AbstractController
          * @var Vendor $vendor
          */
         foreach ($vendors as $vendor) {
+            if ($vendor->getTableCategory() !== $category) {
+                continue;
+            }
             $vendorSeen = false;
             /**
              * @var VoteItem $item
@@ -533,7 +537,7 @@ class VoteController extends AbstractController
         throw new VoteException("No currently runnning votes");
     }
 
-    private function getPrevNextVendor(EntityManagerInterface $entityManager, Vendor $vendor, int $offset = 0): int|null
+    private function getPrevNextVendor(EntityManagerInterface $entityManager, Vendor $vendor, VoteEvent $voteEvent, int $offset = 0): int|null
     {
         if ($offset === 0) {
             return $vendor->getId();
@@ -544,8 +548,8 @@ class VoteController extends AbstractController
         $asde = $offset > 0 ? "ASC" : "DESC";
 
         $doctrine = $entityManager->getConnection();
-        $sql = "SELECT v.id FROM vendor v WHERE v.id {$gtlt} :vid and v.status != :app ORDER BY v.id {$asde} LIMIT 1";
-        $query = $doctrine->prepare($sql)->executeQuery([':vid' => $vendor->getId(), ':app' => VendorStatusEnumeration::STATUS_APPROVED]);
+        $sql = "SELECT v.id FROM vendor v WHERE v.id {$gtlt} :vid and v.status != :app and v.table_category = :tcat ORDER BY v.id {$asde} LIMIT 1";
+        $query = $doctrine->prepare($sql)->executeQuery([':vid' => $vendor->getId(), ':app' => VendorStatusEnumeration::STATUS_APPROVED, ':tcat' => $voteEvent->getTableCategory() ]);
         $vid = $query->fetchOne();
 
         /**

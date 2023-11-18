@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enumerations\TableCategoryEnumeration;
 use App\Enumerations\TableTypeEnumeration;
 use App\Enumerations\VendorStatusEnumeration;
 use App\Repository\VendorRepository;
@@ -98,6 +99,13 @@ class Vendor
 
     private int $eventScore;
 
+    #[ORM\Column(options: [ "default" => false ])]
+    private ?bool $MatureDealersSection = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $tableCategory = null;
+
+
     public function __construct()
     {
         $this->vendorImages = new ArrayCollection();
@@ -190,7 +198,7 @@ class Vendor
 
     public function setWebsite(?string $website): self
     {
-        $this->website = $website;
+        $this->website = substr($website, 0, 250);
 
         return $this;
     }
@@ -202,7 +210,7 @@ class Vendor
 
     public function setTwitter(?string $twitter): self
     {
-        $this->twitter = $twitter;
+        $this->twitter = substr($twitter, 0, 250);
 
         return $this;
     }
@@ -547,5 +555,37 @@ class Vendor
     {
         return TableTypeEnumeration::getSize($this->tableRequestType);
     }
+
+
+    public function isMatureDealersSection(): ?bool
+    {
+        return $this->MatureDealersSection;
+    }
+
+    public function setMatureDealersSection(bool $MatureDealersSection): self
+    {
+        $this->MatureDealersSection = $MatureDealersSection;
+
+        return $this;
+    }
+
+    public function getTableCategory(): ?string
+    {
+        return $this->tableCategory;
+    }
+
+    public function setTableCategory(?string $tableCategory): self
+    {
+        $this->tableCategory = $tableCategory;
+
+        return $this;
+    }
+
+    public function detectTableCategory(): self
+    {
+        $this->tableCategory = TableCategoryEnumeration::category($this);
+        return $this;
+    }
+
 
 }

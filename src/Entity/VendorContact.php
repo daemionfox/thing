@@ -20,7 +20,7 @@ class VendorContact
     #[ORM\Column(length: 255)]
     private ?string $lastName = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $badgeName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
