@@ -53,12 +53,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'User', targetEntity: VoteItem::class, orphanRemoval: true)]
     private Collection $voteItems;
 
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: VendorNote::class, orphanRemoval: true)]
+    private Collection $vendorNotes;
+
 
     public function __construct()
     {
         $this->createdon = new \DateTime();
         $this->messages = new ArrayCollection();
         $this->voteItems = new ArrayCollection();
+        $this->vendorNotes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -250,6 +254,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($voteItem->getUser() === $this) {
                 $voteItem->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, VendorNote>
+     */
+    public function getVendorNotes(): Collection
+    {
+        return $this->vendorNotes;
+    }
+
+    public function addVendorNote(VendorNote $vendorNote): self
+    {
+        if (!$this->vendorNotes->contains($vendorNote)) {
+            $this->vendorNotes->add($vendorNote);
+            $vendorNote->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVendorNote(VendorNote $vendorNote): self
+    {
+        if ($this->vendorNotes->removeElement($vendorNote)) {
+            // set the owning side to null (unless already changed)
+            if ($vendorNote->getOwner() === $this) {
+                $vendorNote->setOwner(null);
             }
         }
 

@@ -105,6 +105,9 @@ class Vendor
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $tableCategory = null;
 
+    #[ORM\OneToMany(mappedBy: 'vendor', targetEntity: VendorNote::class, orphanRemoval: true)]
+    private Collection $vendorNotes;
+
 
     public function __construct()
     {
@@ -112,6 +115,7 @@ class Vendor
         $this->vendorCategories = new ArrayCollection();
         $this->createdon = new \DateTime();
         $this->voteItems = new ArrayCollection();
+        $this->vendorNotes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -584,6 +588,36 @@ class Vendor
     public function detectTableCategory(): self
     {
         $this->tableCategory = TableCategoryEnumeration::category($this);
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, VendorNote>
+     */
+    public function getVendorNotes(): Collection
+    {
+        return $this->vendorNotes;
+    }
+
+    public function addVendorNote(VendorNote $vendorNote): self
+    {
+        if (!$this->vendorNotes->contains($vendorNote)) {
+            $this->vendorNotes->add($vendorNote);
+            $vendorNote->setVendor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVendorNote(VendorNote $vendorNote): self
+    {
+        if ($this->vendorNotes->removeElement($vendorNote)) {
+            // set the owning side to null (unless already changed)
+            if ($vendorNote->getVendor() === $this) {
+                $vendorNote->setVendor(null);
+            }
+        }
+
         return $this;
     }
 

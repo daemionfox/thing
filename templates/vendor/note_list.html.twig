@@ -1,0 +1,27 @@
+<div class="card col-12" id="vendor-notes">
+    <div class="card-body">
+    <h3>Notes</h3>
+    {% for v in vendor.vendorNotes %}
+        <div class="row mb-1">
+            <div class="col note-{{ v.type }} p-1">
+                <div class="row">
+                    <div class="col"><b>{{ v.owner.name }}</b></div>
+                    <div class="col text-end"><b>{{ v.createdon|date('Y-m-d') }}</b>
+                        {% if v.owner.id == app.user.id %}
+                            <a href="/vendor/deletenote?noteid={{ v.id }}" class="btn btn-small btn-danger"><i class="fas fa-trash"></i></a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">{{ v.message }}</div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    {% if 'ROLE_EDITVENDOR' in user.roles %}
+        <div class="row">
+            <div class="col"><button id="create-vendor-note" class="btn btn-outline-primary note-modal-btn"><i class="fas fa-clipboard-list"></i> Create Note</button></div>
+        </div>
+    {% endif %}
+    </div>
+</div>

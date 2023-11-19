@@ -115,6 +115,14 @@
                                         {% endfor %}
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td class="text-bold">Notes</td>
+                                    <td>
+                                        {% for note in voteItem.Vendor.vendorNotes %}
+                                            <div class="row p-2 mb-1 me-3 note-{{ note.type }}">{{ note.message }}</div>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
 
 
 
@@ -144,7 +152,7 @@
                         </div>
 
                     </div>
-                    <div class="col-7 offset-1">
+                    <div class="col offset-1">
                         {% set slideID = 0 %}
 
 

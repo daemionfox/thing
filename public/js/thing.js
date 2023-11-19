@@ -132,7 +132,11 @@ $(document).ready(function(){
         }
     });
 
+    $(".note-modal-btn").on('click', function(event){
+        event.preventDefault();
+        $("#note_modal").modal('show');
 
+    })
 
 });
 

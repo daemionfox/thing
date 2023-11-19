@@ -279,3 +279,32 @@ div.carousel-item {
 .report:nth-child(odd) {
     background-color: rgba(0,0,0,.15);
 }
+
+#note_modal .modal-dialog {
+    max-width: 800px !important;
+}
+
+.note-warning {
+    border: 2px solid #ff0000;
+    background-color: #ffdddd;
+    border-radius: 8px;
+}
+
+.note-caution {
+    border: 2px solid #f5c10a;
+    background-color: #f5ecd0;
+    border-radius: 8px;
+}
+
+.note-clear {
+    border: 2px solid #009900;
+    background-color: #d3efd3;
+    border-radius: 8px;
+}
+
+
+.note-info {
+    border: 2px solid #666666;
+    background-color: #dedede;
+    border-radius: 8px;
+}

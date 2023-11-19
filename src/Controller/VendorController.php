@@ -8,10 +8,12 @@ use App\Entity\User;
 use App\Entity\Vendor;
 use App\Entity\VendorCategory;
 use App\Entity\VendorImage;
+use App\Entity\VendorNote;
 use App\Enumerations\ActionEnumeration;
 use App\Enumerations\TableCategoryEnumeration;
 use App\Enumerations\TableTypeEnumeration;
 use App\Enumerations\VendorCategoryEnumeration;
+use App\Enumerations\VendorNoteLevelEnumeration;
 use App\Enumerations\VendorStatusEnumeration;
 use App\Exceptions\DownloadException;
 use App\Form\ScrubVendorsType;
@@ -153,9 +155,42 @@ class VendorController extends AbstractController
                 'name' => $user->getName(),
                 'roles' => $user->getRoles()
             ],
-            'vendorStatusForm' => $form->createView()
+            'vendorStatusForm' => $form->createView(),
+            'noteLabels' => VendorNoteLevelEnumeration::getList(),
         ]);
 
+    }
+
+    #[Route('/vendor/addnote', name: 'app_addvendornote')]
+    public function addnote(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('ROLE_EDITVENDOR');
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+        $vendid = $request->request->get('vendorid');
+        $message = $request->request->get('vendor-note-text');
+        $type = $request->request->get('vendor-note-type');
+
+        /**
+         * @var Vendor $vendor
+         */
+        $vendor = $entityManager->getRepository(Vendor::class)->find($vendid);
+        $note = new VendorNote();
+        $note
+            ->setOwner($user)
+            ->setVendor($vendor)
+            ->setMessage($message)
+            ->setType($type)
+            ->setCreatedon(new \DateTime())
+        ;
+        $entityManager->persist($note);
+        $entityManager->flush();
+
+        $returnTo = $request->headers->get('referer');
+        return new RedirectResponse($returnTo);
     }
 
 
