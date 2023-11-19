@@ -40,7 +40,7 @@ class VendorFormType extends AbstractType
                     'required' => false
                 ]
             )
-            ->add('isMature')
+            ->add('MatureDealersSection')
             ->add('website')
             ->add('twitter')
             ->add('tableRequestType', ChoiceType::class, [

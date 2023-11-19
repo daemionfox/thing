@@ -33,6 +33,7 @@
     {% if 'ROLE_EDITVENDOR' in user.roles %}
         <div class="sidebar-item m-0 p-3"><a href="/vendor/import"><i class="fas fa-file-import"></i> Import Vendors</a></div>
         <div class="sidebar-item m-0 p-3"><a href="#" class="link-secondary"><i class="fas fa-person-dolly"></i> Add Vendor</a></div>
+        <div class="sidebar-item m-0 p-3"><a href="/vendor/resetcategories"><i class="fas fa-briefcase-medical"></i> Rebuild Vendor Categories</a></div>
         {% if 'ROLE_EDITSTAFF' in user.roles %}
             <div class="sidebar-item m-0 p-3"><a href="/vendor/scrub" class="link-danger"><i class="fas fa-exclamation-triangle"></i> Delete All Vendors</a></div>
         {% endif %}

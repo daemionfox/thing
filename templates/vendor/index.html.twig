@@ -22,49 +22,40 @@
             </div>
             <div class="card-body">
                 <form method="get" action="/vendor">
+                <div class="row d-none">
+                    <label for="vendor-list-search-filter" class="col">Search for:</label>
+                    <label for="vendor-list-status-filter" class="col">Status Filter:</label>
+                    <label for="vendor-list-table-filter" class="col">Table Filter:</label>
+                    <label for="vendor-list-category-filter" class="col">Category Filter:</label>
+                </div>
+                <div class="row"><b>Filter Vendors:</b></div>
                 <div class="row">
-                    <div class="col-3 offset-5">
-                        <div class="row"><label for="vendor-list-status-filter">Status Filter:</label></div>
-                        <div class="row">
-                            <select id="vendor-list-status-filter" name="filter_status" class="form-control vendor-filter" data-filter="status">
-                                <option value="">No Filter</option>
-                                {% for sk,sv in status %}
-                                    <option value="{{ sv }}" {%if filter.status is defined and sv == filter.status %}selected{% endif %}>{{ sk }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-3">
-                        <div class="row"><label for="vendor-list-category-filter">Category Filter:</label></div>
-                        <div class="row">
-                            <select id="vendor-list-category-filter" name="filter_category" class="form-control vendor-filter" data-filter="category">
-                                <option value="">No Filter</option>
-                                {% for ck,cv in category %}
-                                    <option value="{{ cv }}" {% if  filter.category is defined and cv == filter.category %}selected{% endif %}>{{ ck }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-{#                    <div class="col-3">#}
-{#                        <div class="row"><label for="vendor-list-table-filter">Table Filter:</label></div>#}
-{#                        <div class="row">#}
-{#                            <select id="vendor-list-table-filter" name="table" class="form-control vendor-filter" data-filter="table">#}
-{#                                <option value="">No Filter</option>#}
-{#                                {% for tk,tv in table %}#}
-{#                                    <option value="{{ tv }}" {% if  filter.table is defined and tv == filter.table %}selected{% endif %}>{{ tk }}</option>#}
-{#                                {% endfor %}#}
-{#                            </select>#}
-{#                        </div>#}
-{#                    </div>#}
-                    <div class="col-1">
-                        <div class="row">&nbsp;</div>
-                        <div class="row">
-                            <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="far fa-filter"></i></button>
-                        </div>
+                    <div class="col input-group">
+                        <input type="text" id="vendor-list-search-filter" placeholder="Dealer search - blank for all" name="filter_search" class="form-control vendor-filter" value="{{ search }}">
+                        <select id="vendor-list-status-filter" name="filter_status" class="form-select vendor-filter" data-filter="status">
+                            <option value="">No Status</option>
+                            {% for sk,sv in status %}
+                                <option value="{{ sv }}" {%if filter.status is defined and sv == filter.status %}selected{% endif %}>{{ sk }}</option>
+                            {% endfor %}
+                        </select>
+                        <select id="vendor-list-table-filter" name="filter_table" class="form-select vendor-filter" data-filter="table">
+                            <option value="">No Table Type</option>
+                            {% for tk,tv in table %}
+                                <option value="{{ tv }}" {%if filter.table is defined and tv == filter.table %}selected{% endif %}>{{ tk }}</option>
+                            {% endfor %}
+                        </select>
+                        <select id="vendor-list-category-filter" name="filter_category" class="form-select vendor-filter col-3" data-filter="category">
+                            <option value="">No Primary Category</option>
+                            {% for ck,cv in category %}
+                                <option value="{{ cv }}" {% if  filter.category is defined and cv == filter.category %}selected{% endif %}>{{ ck }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-primary"><i class="far fa-filter"></i></button>
+                        <a href="/vendor" class="btn btn-sm btn-warning"><i class="far fa-broom"></i></a>
                     </div>
                 </div>
-
                 </form>
+                <div class="row my-3"><hr /></div>
                 <table class="table table-list table-striped">
                     <thead>
                     <tr>

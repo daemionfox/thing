@@ -9,6 +9,7 @@ use App\Entity\Vendor;
 use App\Entity\VendorCategory;
 use App\Entity\VendorImage;
 use App\Enumerations\ActionEnumeration;
+use App\Enumerations\TableCategoryEnumeration;
 use App\Enumerations\TableTypeEnumeration;
 use App\Enumerations\VendorCategoryEnumeration;
 use App\Enumerations\VendorStatusEnumeration;
@@ -62,6 +63,7 @@ class VendorController extends AbstractController
         $user = $this->getUser();
 
         $filter = [
+            'search' => $request->query->get('filter_search'),
             'status' => $request->query->get('filter_status'),
             'category' => $request->query->get('filter_category'),
             'table' => $request->query->get('filter_table')
@@ -75,9 +77,10 @@ class VendorController extends AbstractController
                 'roles' => $user->getRoles()
             ],
             'vendors' => $paginator->paginate($this->getVendorList($filter), $request->query->getInt('page', 1), 50),
+            'search' => $filter['search'],
             'status' => VendorStatusEnumeration::getList(),
             'category' => VendorCategoryEnumeration::getList(),
-            'table' => TableTypeEnumeration::getList(),
+            'table' => TableCategoryEnumeration::getList(),
             'filter' => $filter
         ]);
     }
@@ -182,6 +185,7 @@ class VendorController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // Here we do the field map.
             new Action($user, ActionEnumeration::ACTION_VENDOR, "Editing vendor {$vendor->getName()} id {$vendor->getId()}", $entityManager);
+            $vendor->detectTableCategory();
             $entityManager->persist($vendor);
             $entityManager->flush();
 
@@ -343,11 +347,8 @@ class VendorController extends AbstractController
      */
     protected function getVendorList($filter = null): array
     {
-        if (empty($filter['status'])) {
-            $vendors = $this->doctrine->getRepository(Vendor::class)->findAll();
-        } else {
-            $vendors = $this->doctrine->getRepository(Vendor::class)->findBy(['status' => $filter['status']]);
-        }
+
+        $vendors = $this->doctrine->getRepository(Vendor::class)->findByFilter($filter);
         if(empty($filter['category'])) {
             return $vendors;
         }
@@ -369,6 +370,28 @@ class VendorController extends AbstractController
 
 
         return $output;
+    }
+
+    #[Route('/vendor/resetcategories', name: "app_resetvendorcategory")]
+    public function fixcategories(EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('ROLE_EDITVENDOR');
+
+        $vendors = $entityManager->getRepository(Vendor::class)->findAll();
+
+        /**
+         * @var Vendor $vendor
+         */
+        foreach ($vendors as $vendor) {
+            $vendor->detectTableCategory();
+            $entityManager->persist($vendor);
+        }
+
+        $entityManager->flush();
+        $this->addFlash('success', 'Table Categories have been rebuilt.');
+
+        return new RedirectResponse('/vendor');
     }
 
 

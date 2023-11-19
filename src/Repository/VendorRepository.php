@@ -63,4 +63,28 @@ class VendorRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+    public function findByFilter($filter): array
+    {
+        $query = $this->createQueryBuilder('v');
+        if (!empty($filter['search'])) {
+            $query
+                ->andWhere('UPPER(v.name) LIKE :name')
+                ->setParameter('name', "%{$filter['search']}%");
+        }
+        if (!empty($filter['status'])) {
+            $query
+                ->andWhere('v.status = :stat')
+                ->setParameter('stat', $filter['status']);
+        }
+        if (!empty($filter['table'])) {
+            $query
+                ->andWhere('v.tableCategory = :table')
+                ->setParameter('table', $filter['table']);
+        }
+        $output = $query->orderBy('v.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+        return $output;
+    }
 }
