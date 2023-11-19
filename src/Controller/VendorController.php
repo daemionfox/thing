@@ -194,6 +194,24 @@ class VendorController extends AbstractController
     }
 
 
+    #[Route('/vendor/deletenote', name: 'app_deletevendornote')]
+    public function deletenote(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('ROLE_EDITVENDOR');
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+        $noteid = $request->request->get('noteid');
+        $note = $entityManager->getRepository(VendorNote::class)->find($noteid);
+        $entityManager->remove($note);
+        $entityManager->flush();
+
+        $returnTo = $request->headers->get('referer');
+        return new RedirectResponse($returnTo);
+    }
+
     #[Route('/vendor/edit', name: 'app_editvendor')]
     public function editvendor(Request $request, EntityManagerInterface $entityManager): Response
     {
