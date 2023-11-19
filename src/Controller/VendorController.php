@@ -203,7 +203,7 @@ class VendorController extends AbstractController
          * @var User $user
          */
         $user = $this->getUser();
-        $noteid = $request->request->get('noteid');
+        $noteid = $request->query->get('noteid');
         $note = $entityManager->getRepository(VendorNote::class)->find($noteid);
         $entityManager->remove($note);
         $entityManager->flush();
