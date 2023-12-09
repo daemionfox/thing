@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vote Machine - Current Vote Events{% endblock %}
+
+{% block header %}
+    {% include 'header.html.twig' with user %}
+{% endblock %}
+{% block sidebar %}
+    {% include 'sidebar.html.twig' with user %}
+{% endblock %}
+
+{% block body %}
+    <div class="col-6 offset-3 d-flex align-items-center justify-content-center pt-5">
+        <div class="card col-12" id="register-staff-screen">
+            <div class="card-header">
+                <h1 class="h3 mb-3 font-weight-normal">Active Vote Events</h1>
+            </div>
+            <div class="card-body">
+            {% for event in events %}
+                <div class="row">
+                    <div class="col">
+                        <a href="/vote/{{ event.id }}"><h3>{{ event.Name }} [{{ event.calculations.current }} / {{ event.calculations.total }}]</h3></a>
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+
+{% endblock %}

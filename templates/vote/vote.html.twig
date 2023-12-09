@@ -133,7 +133,7 @@
                             {{ form_start(voteForm) }}
                             {{ form_widget(voteForm.isSkip) }}
                             <div class="row vote-row">
-                                <div class="col-2"><a class="btn btn-secondary btn-block {% if prevID is empty %}disabled{% endif %}" href="/vote?vendor={{ prevID }}"><i class="fas fa-backward fa-2x" title="Previous"></i></a></div>
+                                <div class="col-2"><a class="btn btn-secondary btn-block {% if prevID is empty %}disabled{% endif %}" href="/vote/{{ event.id }}/{{ prevID }}"><i class="fas fa-backward fa-2x" title="Previous"></i></a></div>
                                 <div class="col-4">
                                     <div class="row">
                                         {{ form_widget(voteForm.Votes) }}
@@ -145,7 +145,7 @@
                                 <div class="col-2"><button type="submit" class="btn btn-primary btn-block" id="vote-submit-button"><i class="fas fa-vote-yea fa-2x" title="Submit Votes"></i></button></div>
                                 <div class="col-2"><button type="button" class="btn btn-warning btn-block" id="vote-skip-button"><i class="far fa-comment fa-2x" title="Skip Vendor"></i></button></div>
 
-                                <div class="col-2"><a class="btn btn-secondary btn-block {% if nextID is empty %}disabled{% endif %}" href="/vote?vendor={{ nextID }}"><i class="fas fa-forward fa-2x" title="Next"></i></a></div>
+                                <div class="col-2"><a class="btn btn-secondary btn-block {% if nextID is empty %}disabled{% endif %}" href="/vote/{{ event.id }}/{{ nextID }}"><i class="fas fa-forward fa-2x" title="Next"></i></a></div>
                             </div>
                             <div id="vote-alert" class="row"></div>
                             {{ form_end(voteForm) }}
@@ -224,7 +224,7 @@
             <div class="card-footer row">
                 <div class="col-12">
                     {% for item in items %}
-                        <a class="item-bubble small m-1 {%  if item.Votes > 0 %}item-voted{% elseif item.isSkip == true %}item-skip{% endif %}" href="/vote?vendor={{ item.Vendor.id }}">{{ item.Vendor.Name|slice(0,1) }}</a>
+                        <a class="item-bubble small m-1 {%  if item.Votes > 0 %}item-voted{% elseif item.isSkip == true %}item-skip{% elseif voteItem.Vendor.id == item.Vendor.id %}item-current{% endif %}" href="/vote/{{ event.id }}/{{ item.Vendor.id }}">{{ item.Vendor.Name|slice(0,1) }}</a>
                     {% endfor %}
                 </div>
             </div>

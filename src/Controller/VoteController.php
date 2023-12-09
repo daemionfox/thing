@@ -12,6 +12,7 @@ use App\Enumerations\TableTypeEnumeration;
 use App\Enumerations\VendorStatusEnumeration;
 use App\Enumerations\VoteEventStatusEnumeration;
 use App\Exceptions\BadFormDataException;
+use App\Exceptions\MultipleVotesRunningException;
 use App\Exceptions\VoteException;
 use App\Form\ApproveVendorType;
 use App\Form\CreateVoteType;
@@ -82,94 +83,6 @@ class VoteController extends AbstractController
 
     }
 
-    #[Route('/vote', 'app_staffvote')]
-    public function vote(EntityManagerInterface $entityManager, Request $request, Session $session)
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        /**
-         * @var User $user
-         */
-        $user = $this->getUser();
-        $vendorID = $request->query->get('vendor');
-        try {
-            /**
-             * @var VoteEvent $voteEvent
-             */
-            $voteEvent = $this->getRunningVoteEvent($entityManager);
-        } catch (VoteException) {
-            $session->getFlashBag()->add("flash_error", "Vote Machine is not running");
-            return new RedirectResponse("/");
-        }
-
-        $items = $this->getVoteItems($entityManager, $user, $voteEvent);
-
-
-        if (empty($vendorID)) {
-
-            return $this->render("vote/startvote.html.twig", [
-                'user' => [
-                    'name' => $user->getName(),
-                    'roles' => $user->getRoles()
-                ],
-                'items' => $items,
-                'event' => $voteEvent
-            ]);
-        }
-
-
-        $vendor = $entityManager->getRepository(Vendor::class)->find($vendorID);
-        $voteItem = $entityManager->getRepository(VoteItem::class)->findOneBy([
-            'User' => $user,
-            'Vendor' => $vendor,
-            'VoteEvent' => $voteEvent
-        ]);
-
-        if (empty($voteItem)) {
-            $voteItem = new VoteItem();
-            $voteItem->setVoteEvent($voteEvent)->setVendor($vendor)->setUser($user);
-        }
-        $voteItem->setIsSkip(false)->setMaxVotes($voteEvent->getMaxVendorVotes());
-        $form = $this->createForm(VoteVendorType::class, $voteItem);
-        $form->handleRequest($request);
-
-        try {
-            if ($form->isSubmitted() && $form->isValid()) {
-                $entityManager->persist($voteItem);
-                $entityManager->flush();
-                $nextVend = $this->getPrevNextVendor($entityManager, $vendor, $voteEvent,1);
-                return new RedirectResponse("/vote?vendor={$nextVend}");
-            }
-        } catch (BadFormDataException) {
-        }
-
-        $itemVotes = 0;
-        /**
-         * @var VoteItem $item
-         */
-        foreach ($items as $item) {
-            $v = $item->getVotes();
-            $v = !empty($v) ? (int)$v : 0;
-            $itemVotes += $v;
-        }
-
-        $remainingVotes = (int)$voteEvent->getStaffVotes() - $itemVotes;
-
-
-        return $this->render("vote/vote.html.twig", [
-            'user' => [
-                'name' => $user->getName(),
-                'roles' => $user->getRoles()
-            ],
-            'event' => $voteEvent,
-            'items' => $items,
-            'voteItem' => $voteItem,
-            'remainingVotes' => $remainingVotes,
-            'voteForm' => $form->createView(),
-            'prevID' => $this->getPrevNextVendor($entityManager, $vendor, $voteEvent, -1),
-            'nextID' => $this->getPrevNextVendor($entityManager, $vendor, $voteEvent, 1)
-        ]);
-
-    }
 
     #[Route('/vote/list', 'app_listvoteevents')]
     public function listVoteEvents(EntityManagerInterface $entityManager)
@@ -436,6 +349,114 @@ class VoteController extends AbstractController
         return $this->endVote($entityManager, $request, VoteEventStatusEnumeration::STATUS_CANCELLED);
     }
 
+
+
+    #[Route('/vote/{voteid?}/{vendorid?}', 'app_staffvote')]
+    public function vote(EntityManagerInterface $entityManager, Request $request, Session $session, ?int $voteid, ?int $vendorid)
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+        /**
+         * @var VoteEvent $voteEvent
+         */
+        $voteEvents = $this->getRunningVoteEvent($entityManager, $voteid);
+
+        if (empty($voteEvents) && !empty($voteid)){
+            $session->getFlashBag()->add("flash_error", "Could not find that voting round");
+            return new RedirectResponse("/");
+        } elseif (empty($voteEvents)) {
+            $session->getFlashBag()->add("flash_error", "Vote Machine is not running");
+            return new RedirectResponse("/");
+        }
+
+        if (count($voteEvents) === 1) {
+            /**
+             * @var VoteEvent $voteEvent
+             */
+            $voteEvent = array_pop($voteEvents);
+            $items = $this->getVoteItems($entityManager, $user, $voteEvent);
+
+
+            if (empty($vendorid)) {
+
+                return $this->render("vote/startvote.html.twig", [
+                    'user' => [
+                        'name' => $user->getName(),
+                        'roles' => $user->getRoles()
+                    ],
+                    'items' => $items,
+                    'event' => $voteEvent
+                ]);
+            }
+
+
+
+            $vendor = $entityManager->getRepository(Vendor::class)->find($vendorid);
+            $voteItem = $entityManager->getRepository(VoteItem::class)->findOneBy([
+                'User' => $user,
+                'Vendor' => $vendor,
+                'VoteEvent' => $voteEvent
+            ]);
+
+            if (empty($voteItem)) {
+                $voteItem = new VoteItem();
+                $voteItem->setVoteEvent($voteEvent)->setVendor($vendor)->setUser($user);
+            }
+            $voteItem->setIsSkip(false)->setMaxVotes($voteEvent->getMaxVendorVotes());
+            $form = $this->createForm(VoteVendorType::class, $voteItem);
+            $form->handleRequest($request);
+
+            try {
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $entityManager->persist($voteItem);
+                    $entityManager->flush();
+                    $nextVend = $this->getPrevNextVendor($entityManager, $vendor, $voteEvent,1);
+                    return new RedirectResponse("/vote/{$voteEvent->getId()}/{$nextVend}");
+                }
+            } catch (BadFormDataException) {
+            }
+
+            $itemVotes = 0;
+            /**
+             * @var VoteItem $item
+             */
+            foreach ($items as $item) {
+                $v = $item->getVotes();
+                $v = !empty($v) ? (int)$v : 0;
+                $itemVotes += $v;
+            }
+
+            $remainingVotes = (int)$voteEvent->getStaffVotes() - $itemVotes;
+
+
+            return $this->render("vote/vote.html.twig", [
+                'user' => [
+                    'name' => $user->getName(),
+                    'roles' => $user->getRoles()
+                ],
+                'event' => $voteEvent,
+                'items' => $items,
+                'voteItem' => $voteItem,
+                'remainingVotes' => $remainingVotes,
+                'voteForm' => $form->createView(),
+                'prevID' => $this->getPrevNextVendor($entityManager, $vendor, $voteEvent, -1),
+                'nextID' => $this->getPrevNextVendor($entityManager, $vendor, $voteEvent, 1)
+            ]);
+        } else {
+            return $this->render("vote/activeevents.html.twig", [
+                'user' => [
+                    'name' => $user->getName(),
+                    'roles' => $user->getRoles()
+                ],
+                'events' => $voteEvents
+            ]);
+        }
+    }
+
+
     private function getVoteItems(EntityManagerInterface $entityManager, User $user, VoteEvent $voteEvent)
     {
         $allItems = $user->getVoteItems();
@@ -526,16 +547,25 @@ class VoteController extends AbstractController
 
     }
 
-    private function getRunningVoteEvent(EntityManagerInterface $entityManager)
+    private function getRunningVoteEvent(EntityManagerInterface $entityManager, ?int $voteid): array
     {
         $events = $entityManager->getRepository(VoteEvent::class)->findAll();
-        foreach ($events as $e) {
+        if (!empty($voteid)) {
+            $events = [$entityManager->getRepository(VoteEvent::class)->find($voteid)];
+        }
+        $active = [];
+        /**
+         * @var VoteEvent $e
+         */
+        foreach ($events as &$e) {
             if ($this->voteIsActive($e)) {
-                return $e;
+                $e->calculations = $this->getVoteTotals($entityManager, $e);
+                $active[] = $e;
             }
         }
-        throw new VoteException("No currently runnning votes");
+        return $active;
     }
+
 
     private function getPrevNextVendor(EntityManagerInterface $entityManager, Vendor $vendor, VoteEvent $voteEvent, int $offset = 0): int|null
     {

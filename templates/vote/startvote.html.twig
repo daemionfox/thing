@@ -18,7 +18,7 @@
             <div class="card-body">
                 <div class="col-12">
                     {% for item in items %}
-                        <a class="item-bubble m-1 {%  if item.Votes > 0 %}item-voted{% elseif item.isSkip == true %}item-skip{% endif %}" href="/vote?vendor={{ item.Vendor.id }}">{{ item.Vendor.Name|slice(0,1) }}</a>
+                        <a class="item-bubble m-1 {%  if item.Votes > 0 %}item-voted{% elseif item.isSkip == true %}item-skip{% endif %}" href="/vote/{{ event.id }}/{{ item.Vendor.id }}">{{ item.Vendor.Name|slice(0,1) }}</a>
                     {% endfor %}
                 </div>
             </div>

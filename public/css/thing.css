@@ -205,6 +205,13 @@ div.event-item.event-ready {
     color: #ffffff;
 }
 
+.item-bubble.item-current {
+    width: 16px !important;
+    height: 16px !important;
+    border: 3px solid #0000ff;
+    border-radius: 0;
+}
+
 div#vendor-image-carousel {
     width: 100%;
     min-height: 500px;
