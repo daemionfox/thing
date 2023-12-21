@@ -19,8 +19,12 @@
             <div class="card-body">
 
                 {{ form_start(vendorForm) }}
-                <div class="col-3 float-end status status-{{ vendorForm.status.vars.value|lower }}">{{ form_row(vendorForm.status, {"label": " "}) }}</div>
-                <h1 class="mb-3 font-weight-normal">{{ vendorForm.name.vars.value }}</h1>
+                <div class="row">
+                    <div class="col">
+                        <h1 class="mb-3 font-weight-normal">{{ vendorForm.name.vars.value }}</h1>
+                    </div>
+                    <div class="col-3 float-end status status-{{ vendorForm.status.vars.value|lower }}">{{ form_row(vendorForm.status, {"label": " "}) }}</div>
+                </div>
                 <h3>Dealer Info</h3>
                 {{ form_row(vendorForm.name) }}
                 {{ form_row(vendorForm.productsAndServices) }}
@@ -28,6 +32,14 @@
                 {{ form_row(vendorForm.rating) }}
                 {{ form_row(vendorForm.website) }}
                 {{ form_row(vendorForm.twitter) }}
+                <h3>Contact</h3>
+                {{ form_row(vendorForm.vendorContact.firstName) }}
+                {{ form_row(vendorForm.vendorContact.lastName) }}
+                {{ form_row(vendorForm.vendorContact.emailAddress) }}
+                <h3>Category</h3>
+                {% for i in vendorForm.vendorCategories %}
+                    {{ form_row(i) }}
+                {% endfor %}
                 <h3>Table Request</h3>
                 {{ form_row(vendorForm.tableRequestType) }}
                 {{ form_row(vendorForm.NumAssistants, {"label": "Number of Assistants"}) }}
@@ -38,6 +50,7 @@
                 {{ form_row(vendorForm.otherRequests) }}
                 <h3>Other</h3>
                 {{ form_row(vendorForm.ImageBlock, {"label": "Setup Images"}) }}
+
                 <button class="btn btn-lg btn-primary" type="submit">Update Vendor</button>
                 {{ form_end(vendorForm) }}
             </div>

@@ -8,6 +8,7 @@ use App\Enumerations\VendorRatingEnumeration;
 use App\Enumerations\VendorStatusEnumeration;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -56,28 +57,28 @@ class VendorFormType extends AbstractType
             ->add('seatingRequests')
             ->add('neighborRequests')
             ->add('otherRequests')
-//            ->add('createdon')
-//            ->add('regfoxid')
             ->add('ImageBlock')
-//            ->add('TableAmount')
             ->add('NumAssistants', IntegerType::class, [
                 'attr' => ['class' => 'form-control',                 'min' => 0,
                     'max' => 6],
 
             ])
-//            ->add('AssistantAmount')
-//            ->add('hasEndcap')
             ->add('status', ChoiceType::class, [
-        'attr' => [
-            'class' => 'form-control', ],
-        'choices' => VendorStatusEnumeration::getList(),
-        'expanded' => false,
-        'multiple' => false,
-        'required' => false
-    ]
+                'attr' => [
+                    'class' => 'form-control', ],
+                'choices' => VendorStatusEnumeration::getList(),
+                'expanded' => false,
+                'multiple' => false,
+                'required' => false
+            ]
 
             )
-//            ->add('vendorContact')
+            ->add('vendorContact', VendorContactType::class, [
+            ])
+            ->add('vendorCategories', CollectionType::class, [
+                'entry_type' => VendorCategoryFormType::class,
+                'entry_options' => ['label' => false],
+            ])
 //            ->add('vendorAddress')
         ;
     }

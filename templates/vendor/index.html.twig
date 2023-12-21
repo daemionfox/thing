@@ -90,7 +90,7 @@
                                 {% if "ROLE_EDITVENDOR" in user.roles %}
                                     <a href="mailto://{{ v.vendorContact.emailAddress }}"><i class="fas fa-envelope" title="No contact email"></i></a>
                                     <a href="/vendor/collectimages?vendor={{ v.id }}" class="btn btn-sm btn-info" title="Load images for {{ v.name }}"><i class="fas fa-camera"></i></a>
-                                    <a href="/vendor/edit?vendor={{ v.id }}" class="btn btn-sm btn-info" title="Edit {{ v.name }}"><i class="fas fa-edit"></i></a>
+                                    <a href="/vendor/edit/{{ v.id }}" class="btn btn-sm btn-info" title="Edit {{ v.name }}"><i class="fas fa-edit"></i></a>
                                     <button class="btn btn-sm btn-danger vendor-delete" data-vendorid="{{ v.id }}" data-vendname="{{ v.name }}" title="Delete {{ v.name }}"><i class="fas fa-trash"></i></button>
                                 {% endif %}
                             </td>

@@ -7,6 +7,7 @@ use App\Entity\Action;
 use App\Entity\User;
 use App\Entity\Vendor;
 use App\Entity\VendorCategory;
+use App\Entity\VendorContact;
 use App\Entity\VendorImage;
 use App\Entity\VendorNote;
 use App\Enumerations\ActionEnumeration;
@@ -73,12 +74,13 @@ class VendorController extends AbstractController
         ;
 
 //        dd($filter);
+        $filteredList = $this->getVendorList($filter);
         return $this->render('vendor/index.html.twig', [
             'user' => [
                 'name' => $user->getName(),
                 'roles' => $user->getRoles()
             ],
-            'vendors' => $paginator->paginate($this->getVendorList($filter), $request->query->getInt('page', 1), 50),
+            'vendors' => $paginator->paginate($filteredList, $request->query->getInt('page', 1), 50),
             'search' => $filter['search'],
             'status' => VendorStatusEnumeration::getList(),
             'category' => VendorCategoryEnumeration::getList(),
@@ -212,21 +214,24 @@ class VendorController extends AbstractController
         return new RedirectResponse($returnTo);
     }
 
-    #[Route('/vendor/edit', name: 'app_editvendor')]
-    public function editvendor(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/vendor/edit/{vendorID?}', name: 'app_editvendor')]
+    public function editvendor(Request $request, EntityManagerInterface $entityManager, ?string $vendorID): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $this->denyAccessUnlessGranted('ROLE_EDITVENDOR');
         $user = $this->getUser();
-        $vendorID = $request->query->get('vendor', '');
-        if (empty($vendorID)) {
-            return new RedirectResponse("/vendor");
+
+        $vendor = new Vendor();
+        $vendor->setVendorContact(new VendorContact())->addVendorCategory(new VendorCategory());
+        if (!empty($vendorID)) {
+            /**
+             * @var Vendor $vendor
+             */
+            $vendor = $entityManager->getRepository(Vendor::class)->find($vendorID);
+        } else {
+            $vendor->setRegfoxid('NOREGFOX');
         }
 
-        /**
-         * @var Vendor $vendor
-         */
-        $vendor = $entityManager->getRepository(Vendor::class)->find($vendorID);
 
         $form = $this->createForm(VendorFormType::class, $vendor);
         $form->handleRequest($request);

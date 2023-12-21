@@ -111,6 +111,7 @@ class Vendor
 
     public function __construct()
     {
+        $this->vendorContact = new VendorContact();
         $this->vendorImages = new ArrayCollection();
         $this->vendorCategories = new ArrayCollection();
         $this->createdon = new \DateTime();

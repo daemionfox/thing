@@ -34,7 +34,7 @@
                         <div class="row">
                             <div class="py-1 px-3 float-end text-end">
                                 {% if 'ROLE_EDITVENDOR' in user.roles %}
-                                    <div><a href="/vendor/edit?vendor={{ vendor.id }}" class="btn btn-info"><i class="far fa-edit"></i> Edit Vendor</a></div>
+                                    <div><a href="/vendor/edit/{{ vendor.id }}" class="btn btn-info"><i class="far fa-edit"></i> Edit Vendor</a></div>
                                 {% endif %}
                             </div>
                         </div>
