@@ -1,5 +1,23 @@
 [
   {
+    "createdon": "2023-12-28 19:00:00",
+    "subject": "Add a Vendor",
+    "type": "feature",
+    "message": "Certain users can now add vendors by hand."
+  },
+  {
+    "createdon": "2023-12-08 19:00:00",
+    "subject": "Multi Vote Added",
+    "type": "feature",
+    "message": "Vote Machine can now handle multiple voting events at once."
+  },
+  {
+    "createdon": "2023-11-19 19:00:00",
+    "subject": "Vendor Updates",
+    "type": "feature",
+    "message": "Added Vendor search and notes."
+  },
+  {
     "createdon": "2023-01-09 19:00:00",
     "subject": "Reports & Status",
     "type": "feature",
