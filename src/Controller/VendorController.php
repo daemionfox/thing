@@ -229,7 +229,7 @@ class VendorController extends AbstractController
              */
             $vendor = $entityManager->getRepository(Vendor::class)->find($vendorID);
         } else {
-            $vendor->setRegfoxid('NOREGFOX');
+            $vendor->setRegfoxid($this->getNewRegFoxID($entityManager));
         }
 
 
@@ -258,6 +258,17 @@ class VendorController extends AbstractController
         ]);
 
 
+    }
+
+    protected function getNewRegFoxID(EntityManagerInterface $entityManager, string $prefix = 'NRF-'): string
+    {
+        $ender = str_pad(rand(0, 99999), 5, '0', STR_PAD_LEFT);
+        $id = "{$prefix}{$ender}";
+        $vend = $entityManager->getRepository(Vendor::class)->findOneBy(['regfoxid' => $id]);
+        if (empty($vend)) {
+            return $id;
+        }
+        return $this->getNewRegFoxID($entityManager, $prefix);
     }
 
     #[Route('/vendor/delete', name: "app_deletevendor")]

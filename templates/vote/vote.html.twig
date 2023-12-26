@@ -179,7 +179,7 @@
                                 {% if websites|length > 0 %}
                                     {% for web in websites %}
                                         <div class="carousel-item {% if slideID == 0 %}active{% endif %}" aria-current="{% if slideID == 0 %}true{% else %}false{% endif %}">
-                                            <embed width="100%" height="500" src="{% if 'http' not in web|trim %}https://{% endif %}{{ web|trim }}"></embed>
+                                            <iframe sandbox="allow-same-origin" width="100%" height="500" src="{% if 'http' not in web|trim %}https://{% endif %}{{ web|trim }}"></iframe>
                                         </div>
                                         {% set slideID = slideID+1 %}
                                     {% endfor %}
