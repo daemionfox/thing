@@ -42,6 +42,7 @@ class VendorFormType extends AbstractType
                 ]
             )
             ->add('MatureDealersSection')
+            ->add('hasEndcap')
             ->add('website')
             ->add('twitter')
             ->add('tableRequestType', ChoiceType::class, [

@@ -42,6 +42,7 @@
                 {% endfor %}
                 <h3>Table Request</h3>
                 {{ form_row(vendorForm.tableRequestType) }}
+                {{ form_row(vendorForm.hasEndcap, {"label":"Requested Endcap"}) }}
                 {{ form_row(vendorForm.NumAssistants, {"label": "Number of Assistants"}) }}
                 {{ form_row(vendorForm.MatureDealersSection, {"label":"Mature Dealers Section"}) }}
                 <h3>Requests</h3>
