@@ -50,10 +50,13 @@
                         <div class="row message-row mb-3">
                             <div class="row">
                                 <div class="col-1 cl-icon"><i class="fas {{ message.icon }}"></i></div>
-                                <div class="col-7 cl-title">{{ message.subject }}</div>
+                                <div class="col cl-title">{{ message.subject }}</div>
                                 <div class="col-4 cl-date">{{ message.createdon|date('Y-m-d') }}</div>
+                                {% if message.pinned %}
+                                    <div class="col-1"><i class="fas fa-thumbtack float-end"></i></div>
+                                {% endif %}
                             </div>
-                            <div class="row">
+                            <div class="row mb-3">
                                 <div class="col-11 offset-1 cl-message">{{ message.message|raw }}</div>
                             </div>
                         </div>

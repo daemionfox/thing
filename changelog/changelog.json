@@ -1,5 +1,11 @@
 [
   {
+    "createdon": "2024-03-24 14:00:00",
+    "subject": "Bug Fixes",
+    "type": "bug",
+    "message": "Added a number of statuses and fixed the report download filter."
+  },
+  {
     "createdon": "2023-12-28 19:00:00",
     "subject": "Add a Vendor",
     "type": "feature",
@@ -34,6 +40,13 @@
   "subject": "Bug Fixes",
   "type": "bug",
   "message": "Fixed vote lockout.  Fixed min votes start at 1.  Removed duplicate categories."
+  },
+  {
+    "createdon": "2022-12-01 21:21:00",
+    "subject": "Bug and Feature Form",
+    "type": "feature",
+    "message": "<a class='btn btn-outline-primary' href='https://forms.gle/oXyp3WLudJT9x11U7' target='_blank'><i class='fas fa-bug'></i> Bug Report/Feature Request</a>",
+    "pinned": true
   },
   {
     "createdon": "2022-11-27 14:49:00",

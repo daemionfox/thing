@@ -200,13 +200,37 @@ class DashboardController extends AbstractController
             }
         }
 
-        usort($messages, function($a, $b){
+        $pinned = [];
+        $unpinned = [];
+        /**
+         * @var Message $message
+         */
+        foreach ($messages as $message) {
+            if ($message->isPinned()) {
+                $pinned[] = $message;
+            } else {
+                $unpinned[] = $message;
+            }
+        }
+
+        usort($pinned, function($a, $b){
             /**
              * @var Message $a
              * @var Message $b
              */
             return $a->getCreatedOn()->getTimestamp() <= $b->getCreatedOn()->getTimestamp();
         });
+
+        usort($unpinned, function($a, $b){
+            /**
+             * @var Message $a
+             * @var Message $b
+             */
+            return $a->getCreatedOn()->getTimestamp() <= $b->getCreatedOn()->getTimestamp();
+        });
+
+        $messages = array_merge($pinned, $unpinned);
+
 
         return $messages;
     }
@@ -219,12 +243,14 @@ class DashboardController extends AbstractController
         $type = !empty($data->type) ? $data->type : "unknown";
         $subject = !empty($data->subject) ? $data->subject : "";
         $details = !empty($data->message) ? $data->message : "";
-
+        $pinned = !empty($data->pinned) ? $data->pinned : false;
         $message
             ->setCreatedon((new \DateTime())->setTimestamp($createdon))
             ->setType($type)
             ->setSubject($subject)
-            ->setMessage($details);
+            ->setMessage($details)
+            ->setPinned($pinned);
+        ;
 
 
         return $message;

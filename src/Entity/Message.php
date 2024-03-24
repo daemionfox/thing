@@ -31,6 +31,8 @@ class Message
     #[ORM\Column(type: Types::DATETIMETZ_MUTABLE)]
     private ?\DateTimeInterface $createdon = null;
 
+    private bool $pinned = false;
+
     private ?string $icon = null;
 
     public function __construct()
@@ -117,4 +119,22 @@ class Message
 
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function isPinned(): bool
+    {
+        return $this->pinned;
+    }
+
+    /**
+     * @param bool $pinned
+     */
+    public function setPinned(bool $pinned): void
+    {
+        $this->pinned = $pinned;
+    }
+
+
 }

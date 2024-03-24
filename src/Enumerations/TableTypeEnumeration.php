@@ -20,6 +20,7 @@ class TableTypeEnumeration extends AbstractEnumeration
     const TABLETYPE_TRIPLE = "Triple Table";
     const TABLETYPE_QUAD = "Quad Table";
     const TABLETYPE_QUINT = "Quint Table";
+    const TABLETYPE_SEXTUP = "Sextuple Table";
     const TABLETYPE_SMALLBOOTH = "Small Booth";
     const TABLETYPE_LARGEBOOTH = "Large Booth";
     const TABLETYPE_ENDCAP = "EndCap";
@@ -31,6 +32,7 @@ class TableTypeEnumeration extends AbstractEnumeration
     const TABLEAMOUNT_TRIPLE = 700;
     const TABLEAMOUNT_QUAD = 950;
     const TABLEAMOUNT_QUINT = 1300;
+    const TABLEAMOUNT_SEXTUP = 1800;
     const TABLEAMOUNT_SMALLBOOTH = 0;
     const TABLEAMOUNT_LARGEBOOTH = 1600;
     const TABLEAMOUNT_ENDCAP = 100;
@@ -42,6 +44,7 @@ class TableTypeEnumeration extends AbstractEnumeration
     const TABLEASSTMAX_TRIPLE = 4;
     const TABLEASSTMAX_QUAD = 5;
     const TABLEASSTMAX_QUINT = 6;
+    const TABLEASSTMAX_SEXTUP = 6;
     const TABLEASSTMAX_SMALLBOOTH = 6;
     const TABLEASSTMAX_LARGEBOOTH = 6;
     const TABLEASSTMAX_ENDCAP = 0;
@@ -53,6 +56,7 @@ class TableTypeEnumeration extends AbstractEnumeration
     const TABLESIZE_TRIPLE = 3;
     const TABLESIZE_QUAD = 4;
     const TABLESIZE_QUINT = 5;
+    const TABLESIZE_SEXTUP = 6;
     const TABLESIZE_SMALLBOOTH = "Small Booth";
     const TABLESIZE_LARGEBOOTH = "Large Booth";
     const TABLESIZE_ENDCAP = 0;
@@ -74,6 +78,8 @@ class TableTypeEnumeration extends AbstractEnumeration
                 return self::TABLESIZE_QUAD;
             case strtoupper(self::TABLETYPE_QUINT):
                 return self::TABLESIZE_QUINT;
+            case strtoupper(self::TABLETYPE_SEXTUP):
+                return self::TABLESIZE_SEXTUP;
             case strtoupper(self::TABLETYPE_SMALLBOOTH):
                 return self::TABLESIZE_SMALLBOOTH;
             case strtoupper(self::TABLETYPE_LARGEBOOTH):
@@ -102,6 +108,8 @@ class TableTypeEnumeration extends AbstractEnumeration
                 return self::TABLEAMOUNT_QUAD;
             case self::TABLETYPE_QUINT:
                 return self::TABLEAMOUNT_QUINT;
+            case self::TABLETYPE_SEXTUP:
+                return self::TABLEAMOUNT_SEXTUP;
             case self::TABLETYPE_SMALLBOOTH:
                 return self::TABLEAMOUNT_SMALLBOOTH;
             case self::TABLETYPE_LARGEBOOTH:
@@ -133,6 +141,8 @@ class TableTypeEnumeration extends AbstractEnumeration
                 return self::TABLEASSTMAX_QUAD;
             case self::TABLETYPE_QUINT:
                 return self::TABLEASSTMAX_QUINT;
+            case self::TABLETYPE_SEXTUP:
+                return self::TABLEASSTMAX_SEXTUP;
             case self::TABLETYPE_SMALLBOOTH:
                 return self::TABLEASSTMAX_SMALLBOOTH;
             case self::TABLETYPE_LARGEBOOTH:

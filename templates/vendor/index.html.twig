@@ -101,7 +101,7 @@
                 </table>
                 <div class="navigation">{{ knp_pagination_render(vendors) }}</div>
                 {% if "ROLE_EDITVENDOR" in user.roles %}
-                    <div class="download mt-3"><a class="btn btn-secondary" href="/vendor/getlist?filter_status={{ filter.status }}&filter_category={{ filter.category }}"><i class="far fa-download"></i> Download Vendor List</a></div>
+                    <div class="download mt-3"><a class="btn btn-secondary" href="/vendor/getlist?filter_status={{ filter.status }}&filter_table={{ filter.table }}&filter_category={{ filter.category }}"><i class="far fa-download"></i> Download Vendor List</a></div>
                 {% endif %}
             </div>
         </div>
