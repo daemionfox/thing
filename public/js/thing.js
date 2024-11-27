@@ -76,6 +76,9 @@ $(document).ready(function(){
         let totalTable = 0;
         let smallTotal = 0;
         let largeTotal = 0;
+        let tattooTotal = 0;
+        let bodegaTotal = 0;
+
         $(".process-check").each(function(indx, item) {
             let voteproc = $(item).parents('.vote-process').first();
             let scorelocal = $(item).data('score');
@@ -86,7 +89,11 @@ $(document).ready(function(){
                 if (tableLocal === "Large Booth") {
                     largeTotal++;
                 } else if (tableLocal === "Small Booth") {
-                    smallTotal++
+                    smallTotal++;
+                } else if (tableLocal === "Tattoo Booth") {
+                    tattooTotal++;
+                } else if (tableLocal === .5) {
+                    bodegaTotal++;
                 } else {
                     totalTable += tableLocal;
                 }
@@ -97,6 +104,9 @@ $(document).ready(function(){
         $("#hover-table").html(totalTable);
         $("#hover-lgbooth").html(largeTotal);
         $("#hover-smbooth").html(smallTotal);
+        $("#hover-tbooth").html(tattooTotal);
+        $("#hover-bodega").html(bodegaTotal);
+
         $("#report-hover").html(totalVend);
     }).on('mouseout', function(event){
         event.preventDefault();

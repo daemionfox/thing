@@ -185,6 +185,9 @@ class VoteController extends AbstractController
         $tablespaces = 0;
         $smbooths = 0;
         $lgbooths = 0;
+        $tbooths = 0;
+        $bodega = 0;
+        $mature = 0;
         /**
          * @var Vendor $vendor
          */
@@ -198,6 +201,12 @@ class VoteController extends AbstractController
                         break;
                     case TableTypeEnumeration::TABLESIZE_LARGEBOOTH:
                         $lgbooths++;
+                        break;
+                    case TableTypeEnumeration::TABLESIZE_TATTOO:
+                        $tbooths++;
+                        break;
+                    case TableTypeEnumeration::TABLESIZE_HALF:
+                        $bodega++;
                         break;
                     default:
                         $tablespaces += $table;
@@ -290,6 +299,8 @@ class VoteController extends AbstractController
             'tables' => $tablespaces,
             'lgbooth' => $lgbooths,
             'smbooth' => $smbooths,
+            'tbooth' => $tbooths,
+            'bodega' => $bodega,
             'approveform' => $form->createView()
         ]);
 

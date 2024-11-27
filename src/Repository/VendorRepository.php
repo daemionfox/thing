@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Vendor;
+use App\Enumerations\TableCategoryEnumeration;
+use App\Enumerations\VendorAreaEnumeration;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -77,10 +79,15 @@ class VendorRepository extends ServiceEntityRepository
                 ->andWhere('v.status = :stat')
                 ->setParameter('stat', $filter['status']);
         }
-        if (!empty($filter['table'])) {
+        if (!empty($filter['table']) && $filter['table'] != TableCategoryEnumeration::CATEGORY_MATURE) {
             $query
                 ->andWhere('v.tableCategory = :table')
                 ->setParameter('table', $filter['table']);
+        } elseif (!empty($filter['table'])){
+            $query
+                ->andWhere('v.area = :area')
+                ->setParameter('area', VendorAreaEnumeration::AREA_MATURE);
+
         }
         $output = $query->orderBy('v.id', 'ASC')
             ->getQuery()

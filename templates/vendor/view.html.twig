@@ -49,7 +49,7 @@
                         </div>
 
                         <div class='row mb-3'>
-                            <div class='col-4 text-end'><b>Products And Services:</b></div>
+                            <div class='col-4 text-end'><b>Business Description:</b></div>
                             <div class='col-8'>{{ vendor.productsAndServices }}</div>
                         </div>
 
@@ -68,12 +68,20 @@
                             <div class='col-8'><a href="{% if vendor.website|slice(0,4)|lower == 'http' %}{{ vendor.website }}{% else %}http://{{ vendor.website }}{% endif %}" target="_blank">{{ vendor.website }}</a></div>
                         </div>
 
-                        <div class='row mb-3'>
-                            <div class='col-4 text-end'><b>Twitter:</b></div>
-                            <div class='col-8'><a href="https://twitter.com/{{ vendor.twitter }}" target="_blank">{{ vendor.twitter }}</a></div>
+                        <div class='row mb-2'>
+                            <div class='col-4 text-end'><b>Product Categories:</b></div>
                         </div>
+                        {% for vcat in vendor.vendorCategories %}
+                            <div class='row mb-2'>
+                                <div class='col-8 offset-4'>{{ vcat.category }}</div>
+                            </div>
+                        {% endfor %}
 
                         <h3>Table Request</h3>
+                        <div class='row mb-3'>
+                            <div class='col-4 text-end'><b>Vending Area:</b></div>
+                            <div class='col-8'>{{ vendor.area }}</div>
+                        </div>
                         <div class='row mb-3'>
                             <div class='col-4 text-end'><b>Table Type:</b></div>
                             <div class='col-8'>{{ vendor.tableRequestType }}</div>
@@ -82,11 +90,6 @@
                         <div class='row mb-3'>
                             <div class='col-4 text-end'><b>Number of Assistants:</b></div>
                             <div class='col-8'>{{ vendor.NumAssistants }}</div>
-                        </div>
-
-                        <div class='row mb-3'>
-                            <div class='col-4 text-end'><b>Mature Dealer's Section:</b></div>
-                            <div class='col-8'>{% if vendor.MatureDealersSection %}Yes{% else %}No{% endif %}</div>
                         </div>
 
                         <h3>Requests</h3>

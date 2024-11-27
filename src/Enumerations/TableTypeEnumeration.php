@@ -13,17 +13,19 @@ class TableTypeEnumeration extends AbstractEnumeration
     private $labelprefix = 'TABLETYPE_';
 
 
-    const TABLETYPE_HALF = "Half Table";
-    const TABLETYPE_SINGLE = "Single Table";
-    const TABLETYPE_SINGLEHALF = "Single+Half Table";
+//    const TABLETYPE_SINGLEHALF = "Single+Half Table";
+//    const TABLETYPE_ENDCAP = "EndCap";
+
+    const TABLETYPE_HALF = "Bodega Table";
     const TABLETYPE_DOUBLE = "Double Table";
-    const TABLETYPE_TRIPLE = "Triple Table";
+    const TABLETYPE_SEXTUP = "Hextuple Table";
+    const TABLETYPE_LARGEBOOTH = "Large Booth";
     const TABLETYPE_QUAD = "Quad Table";
     const TABLETYPE_QUINT = "Quint Table";
-    const TABLETYPE_SEXTUP = "Sextuple Table";
+    const TABLETYPE_SINGLE = "Single Table";
     const TABLETYPE_SMALLBOOTH = "Small Booth";
-    const TABLETYPE_LARGEBOOTH = "Large Booth";
-    const TABLETYPE_ENDCAP = "EndCap";
+    const TABLETYPE_TRIPLE = "Triple Table";
+    const TABLETYPE_TATTOO = "Tattoo Booth";
 
     const TABLEAMOUNT_HALF = 99;
     const TABLEAMOUNT_SINGLE = 200;
@@ -35,6 +37,7 @@ class TableTypeEnumeration extends AbstractEnumeration
     const TABLEAMOUNT_SEXTUP = 1800;
     const TABLEAMOUNT_SMALLBOOTH = 0;
     const TABLEAMOUNT_LARGEBOOTH = 1600;
+    const TABLEAMOUNT_TATTOO = 0;
     const TABLEAMOUNT_ENDCAP = 100;
 
     const TABLEASSTMAX_HALF = 1;
@@ -47,11 +50,11 @@ class TableTypeEnumeration extends AbstractEnumeration
     const TABLEASSTMAX_SEXTUP = 6;
     const TABLEASSTMAX_SMALLBOOTH = 6;
     const TABLEASSTMAX_LARGEBOOTH = 6;
+    const TABLEASSTMAX_TATTOO = 1;
     const TABLEASSTMAX_ENDCAP = 0;
     
     const TABLESIZE_HALF = .5;
     const TABLESIZE_SINGLE = 1;
-    const TABLESIZE_SINGLEHALF = 1.5;
     const TABLESIZE_DOUBLE = 2;
     const TABLESIZE_TRIPLE = 3;
     const TABLESIZE_QUAD = 4;
@@ -59,6 +62,7 @@ class TableTypeEnumeration extends AbstractEnumeration
     const TABLESIZE_SEXTUP = 6;
     const TABLESIZE_SMALLBOOTH = "Small Booth";
     const TABLESIZE_LARGEBOOTH = "Large Booth";
+    const TABLESIZE_TATTOO = "Tattoo Booth";
     const TABLESIZE_ENDCAP = 0;
        
     public static function getSize($type)
@@ -68,8 +72,8 @@ class TableTypeEnumeration extends AbstractEnumeration
                 return self::TABLESIZE_HALF;
             case strtoupper(self::TABLETYPE_SINGLE):
                 return self::TABLESIZE_SINGLE;
-            case strtoupper(self::TABLETYPE_SINGLEHALF):
-                return self::TABLESIZE_SINGLEHALF;
+//            case strtoupper(self::TABLETYPE_SINGLEHALF):
+//                return self::TABLESIZE_SINGLEHALF;
             case strtoupper(self::TABLETYPE_DOUBLE):
                 return self::TABLESIZE_DOUBLE;
             case strtoupper(self::TABLETYPE_TRIPLE):
@@ -84,6 +88,8 @@ class TableTypeEnumeration extends AbstractEnumeration
                 return self::TABLESIZE_SMALLBOOTH;
             case strtoupper(self::TABLETYPE_LARGEBOOTH):
                 return self::TABLESIZE_LARGEBOOTH;
+            case strtoupper(self::TABLETYPE_TATTOO):
+                return self::TABLESIZE_TATTOO;
         }
         return 0;
     }
@@ -98,8 +104,8 @@ class TableTypeEnumeration extends AbstractEnumeration
                 return self::TABLEAMOUNT_HALF;
             case self::TABLETYPE_SINGLE:
                 return self::TABLEAMOUNT_SINGLE;
-            case self::TABLETYPE_SINGLEHALF:
-                return self::TABLEAMOUNT_SINGLEHALF;
+//            case self::TABLETYPE_SINGLEHALF:
+//                return self::TABLEAMOUNT_SINGLEHALF;
             case self::TABLETYPE_DOUBLE:
                 return self::TABLEAMOUNT_DOUBLE;
             case self::TABLETYPE_TRIPLE:
@@ -114,8 +120,8 @@ class TableTypeEnumeration extends AbstractEnumeration
                 return self::TABLEAMOUNT_SMALLBOOTH;
             case self::TABLETYPE_LARGEBOOTH:
                 return self::TABLEAMOUNT_LARGEBOOTH;
-            case self::TABLETYPE_ENDCAP:
-                return self::TABLEAMOUNT_ENDCAP;
+            case self::TABLETYPE_TATTOO:
+                return self::TABLEAMOUNT_TATTOO;
         }
         throw new OptionNotFoundException("Could not find option for {$type}");
     }
@@ -131,8 +137,6 @@ class TableTypeEnumeration extends AbstractEnumeration
                 return self::TABLEASSTMAX_HALF;
             case self::TABLETYPE_SINGLE:
                 return self::TABLEASSTMAX_SINGLE;
-            case self::TABLETYPE_SINGLEHALF:
-                return self::TABLEASSTMAX_SINGLEHALF;
             case self::TABLETYPE_DOUBLE:
                 return self::TABLEASSTMAX_DOUBLE;
             case self::TABLETYPE_TRIPLE:
@@ -147,8 +151,8 @@ class TableTypeEnumeration extends AbstractEnumeration
                 return self::TABLEASSTMAX_SMALLBOOTH;
             case self::TABLETYPE_LARGEBOOTH:
                 return self::TABLEASSTMAX_LARGEBOOTH;
-            case self::TABLETYPE_ENDCAP:
-                return self::TABLEASSTMAX_ENDCAP;
+            case self::TABLETYPE_TATTOO:
+                return self::TABLEASSTMAX_TATTOO;
         }
         throw new OptionNotFoundException("Could not find option for {$type}");
     }

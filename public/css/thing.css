@@ -229,13 +229,13 @@ div.carousel-item {
 
 #score-reporting-float {
     position: fixed;
-    width: 300px;
-    height: 300px;
+    width: 500px;
+    height: 500px;
     right: 20px;
     bottom: 50px;
     border: 1px solid #000000;
     border-radius: 24px;
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 50%);
 }
 
 .vote-process:nth-child(odd) {

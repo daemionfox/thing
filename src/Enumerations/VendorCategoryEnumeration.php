@@ -12,19 +12,24 @@ class VendorCategoryEnumeration extends AbstractEnumeration
     private $constprefix = 'CATEGORY_';
     private $labelprefix = 'CATEGORY_';
 
-    const CATEGORY_ACCESSORIES = "Accessories / Jewelry";
-    const CATEGORY_ARTWORK = "Artwork (Originals / Prints / Commissions)";
-    const CATEGORY_BOOKS = "Books / Magazines";
-    const CATEGORY_CLOTHING = "Clothing";
+    const CATEGORY_ADULT = "Adult Novelties";
+    const CATEGORY_ACCESSORIES = "Small Accessories (Pins, Keychains, Buttons, Charms, Lanyards, Jewelry)";
+    const CATEGORY_ARTWORK = "Commissions, Sketches, and Badges";
+    const CATEGORY_BOOKS = "Print Media (Books, Calendars, Prints)";
+    const CATEGORY_CLOTHING = "Clothing & Clothing Accessories";
     const CATEGORY_COMICS = "Comic Books / Graphic Novels";
-    const CATEGORY_FURSUITS = "Fursuits / Costuming";
-    const CATEGORY_GAMES = "Games (Board / Video / Tabletop )";
+    const CATEGORY_FURSUITS = "Fursuit \/ Costume Accessories and Props";
+    const CATEGORY_GAMES = "Games (Tabletop Games, Dice, Figurines, Playmats, Video Games)";
     const CATEGORY_HOMEGOODS = "Home Goods (Mugs / Pillows / etc)";
     const CATEGORY_OTHER = "Other (Please describe below)";
-    const CATEGORY_PERFUMES = "Perfumes / Soaps / Sprays";
-    const CATEGORY_TOYS = "Plush Animals / Toys";
+    const CATEGORY_PERFUMES = "Soaps, Perfumes, and Bathroom Accessories";
+    const CATEGORY_TOYS = "Plushies & Toys";
     const CATEGORY_PRINTING = "Printing / Lamination";
     const CATEGORY_SCULPTURE = "Sculpture / Figurines";
+    const CATEGORY_LEATHER = "Collars, Cuffs, Harnesses, and Belts";
+    const CATEGORY_ELECTRONICS = "Electronic Accessories (LED Badges)";
+    const CATEGORY_DECOR = "Interior Decor (Posters, Artwork, Sculptures)";
+
 
     const COLOR_ACCESSORIES = "rgb(192, 75, 43)";
     const COLOR_ARTWORK = "rgb(22, 160, 133)";
@@ -39,6 +44,12 @@ class VendorCategoryEnumeration extends AbstractEnumeration
     const COLOR_TOYS = "rgb(52, 152, 219)";
     const COLOR_PRINTING = "rgb(230, 126, 34)";
     const COLOR_SCULPTURE = "rgb(26, 188, 156)";
+    const COLOR_ADULT = "rgb(227,28,121)";
+    const COLOR_LEATHER = "rgb(183,119,41)";
+    const COLOR_ELECTRONICS = "rgb(229,225,230)";
+    const COLOR_DECOR = "rgb(68,215,168)";
+
+
     const COLOR_DEFAULT = "rgb(127,127,127)";
 
 

@@ -229,7 +229,7 @@ class VendorController extends AbstractController
              */
             $vendor = $entityManager->getRepository(Vendor::class)->find($vendorID);
         } else {
-            $vendor->setRegfoxid($this->getNewRegFoxID($entityManager));
+            $vendor->setRemoteId($this->getNewRegFoxID($entityManager));
         }
 
 
@@ -312,6 +312,7 @@ class VendorController extends AbstractController
             $connection = $entityManager->getConnection();
 
             $tables = [
+                'vendor_note',
                 'vendor_image',
                 'vendor_address',
                 'vendor_contact',

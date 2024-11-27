@@ -36,7 +36,7 @@ trait EnumerationGetTrait
 
     public static function get(string $string): string
     {
-        $class = self::class;
+        $class = static::class;
         $reflect = new \ReflectionClass($class);
         $constants = $reflect->getConstants();
 
@@ -46,6 +46,13 @@ trait EnumerationGetTrait
             }
         }
         throw new OptionNotFoundException("Could not identify value: {$string}");
+    }
+
+    public static function simplify(string $string): string
+    {
+        $string = preg_replace("/\([0-9]+\)/", "", $string);
+        $string = trim($string);
+        return $string;
     }
 
 }

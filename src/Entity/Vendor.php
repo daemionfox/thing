@@ -55,6 +55,9 @@ class Vendor
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $otherRequests = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $specialRequests = null;
+
     #[ORM\OneToOne(mappedBy: 'vendor', cascade: ['persist', 'remove'])]
     private ?VendorContact $vendorContact = null;
 
@@ -71,7 +74,7 @@ class Vendor
     private ?\DateTimeInterface $createdon = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    private ?string $regfoxid = null;
+    private ?string $remoteId = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $ImageBlock = null;
@@ -100,7 +103,7 @@ class Vendor
     private int $eventScore;
 
     #[ORM\Column(options: [ "default" => false ])]
-    private ?bool $MatureDealersSection = null;
+    private ?bool $MatureDealersSection = false;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $tableCategory = null;
@@ -108,6 +111,8 @@ class Vendor
     #[ORM\OneToMany(mappedBy: 'vendor', targetEntity: VendorNote::class, orphanRemoval: true)]
     private Collection $vendorNotes;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $area = "General area";
 
     public function __construct()
     {
@@ -237,8 +242,11 @@ class Vendor
         return $this->seatingRequests;
     }
 
-    public function setSeatingRequests(?string $seatingRequests): self
+    public function setSeatingRequests(null|string|array $seatingRequests): self
     {
+        if (is_array($seatingRequests)) {
+            $seatingRequests = join(", \n", $seatingRequests);
+        }
         $this->seatingRequests = $seatingRequests;
 
         return $this;
@@ -374,15 +382,14 @@ class Vendor
         return $this;
     }
 
-    public function getRegfoxid(): ?string
+    public function getRemoteId(): ?string
     {
-        return $this->regfoxid;
+        return $this->remoteId;
     }
 
-    public function setRegfoxid(string $regfoxid): self
+    public function setRemoteId(string $remoteId): self
     {
-        $this->regfoxid = $regfoxid;
-
+        $this->remoteId = $remoteId;
         return $this;
     }
 
@@ -620,6 +627,38 @@ class Vendor
         }
 
         return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getArea(): ?string
+    {
+        return $this->area;
+    }
+
+    /**
+     * @param string|null $area
+     */
+    public function setArea(?string $area): void
+    {
+        $this->area = $area;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSpecialRequests(): ?string
+    {
+        return $this->specialRequests;
+    }
+
+    /**
+     * @param string|null $specialRequests
+     */
+    public function setSpecialRequests(?string $specialRequests): void
+    {
+        $this->specialRequests = $specialRequests;
     }
 
 

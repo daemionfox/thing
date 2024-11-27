@@ -9,6 +9,7 @@ use App\Entity\VendorAddress;
 use App\Entity\VendorCategory;
 use App\Entity\VendorContact;
 use App\Enumerations\ActionEnumeration;
+use App\Enumerations\ConCatHeaderEnumeration;
 use App\Enumerations\RegFoxHeaderEnumeration;
 use App\Enumerations\TableTypeEnumeration;
 use App\Enumerations\VendorCategoryEnumeration;
@@ -90,21 +91,30 @@ class VendorImportController extends AbstractController
     public function runImport(Request $request, FormInterface $form): Response
     {
         set_time_limit(-1);
+
         $cacheDir = __DIR__ . "/../../cache";
         $regfoxUpload = $form->get('regfox_csv')->getData();
         $filename = $regfoxUpload->getClientOriginalName();
         $regfoxUpload->move($cacheDir, $filename);
 
-        $csv = Reader::createFromPath("{$cacheDir}/{$filename}", 'r');
-
-        $headers = $csv->setHeaderOffset(0)->getHeader();
-
-        $records = $csv->getRecords($headers);
+        if (str_ends_with(strtoupper($filename), "JSON")) {
+            $records = json_decode(file_get_contents("{$cacheDir}/{$filename}"), true);
+        } elseif (str_ends_with(strtoupper($filename), "CSV")) {
+            $csv = Reader::createFromPath("{$cacheDir}/{$filename}", 'r');
+            $headers = $csv->setHeaderOffset(0)->getHeader();
+            $records = $csv->getRecords($headers);
+        } else {
+            throw new \Exception("Could not understand file");
+        }
+        $conn = $this->doctrine->getConnection();
+        $conn->getConfiguration()->setMiddlewares([]);
+        $recordCount = 0;
         foreach ($records as $offset => $record) {
             $vend = $this->buildVendor((array) $record);
             $this->doctrine->persist($vend);
+            $this->doctrine->flush();
+            $this->doctrine->clear();
         }
-        $this->doctrine->flush();
         return new RedirectResponse("/vendor");
     }
 
@@ -114,15 +124,16 @@ class VendorImportController extends AbstractController
     protected function buildVendor(array $record): Vendor
     {
         $vendor = new Vendor();
-        $vendorContact = new VendorContact();
+        $vendorContact = null;
         $tableAmount = 0;
         $endcapAmount = 0;
+        $vendorEnumeration = new ConCatHeaderEnumeration();
 
-        if (!empty($record[RegFoxHeaderEnumeration::REGFOX_REGID])) {
+        if (!empty($record[$vendorEnumeration::VENDOR_REGID])) {
             /**
              * @var Vendor $vendor
              */
-            $vendor = $this->doctrine->getRepository(Vendor::class)->findOneBy(['regfoxid' => $record[RegFoxHeaderEnumeration::REGFOX_REGID]]);
+            $vendor = $this->doctrine->getRepository(Vendor::class)->findOneBy(['remoteId' => $record[$vendorEnumeration::VENDOR_REGID]]);
             $vendor = $vendor ?? new Vendor();
             $vendorContact = $vendor->getVendorContact() ?? new VendorContact();
         }
@@ -130,133 +141,156 @@ class VendorImportController extends AbstractController
 
         foreach ($record as $key => $value) {
             try {
-                $cleanKey = RegFoxHeaderEnumeration::get($key);
-
+                $cleanKey = $vendorEnumeration::get($vendorEnumeration::simplify($key));
+                if (empty($cleanKey)) {
+                    continue;
+                }
                 switch ($cleanKey) {
-                    case RegFoxHeaderEnumeration::REGFOX_REGID:
-                        $vendor->setRegfoxid($value);
+                    case $vendorEnumeration::VENDOR_AREA:
+                        $vendor->setArea($value);
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_FIRSTNAME:
+                    case $vendorEnumeration::VENDOR_REGID:
+                        $vendor->setRemoteId($value);
+                        break;
+                    case $vendorEnumeration::VENDOR_FIRSTNAME:
                         $vendorContact->setFirstName($value);
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_LASTNAME:
+                    case $vendorEnumeration::VENDOR_LASTNAME:
                         $vendorContact->setLastName($value);
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_BADGENAME:
+                    case $vendorEnumeration::VENDOR_BADGENAME:
                         $vendorContact->setBadgeName($value);
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_EMAIL:
+                    case $vendorEnumeration::VENDOR_EMAIL:
                         $vendorContact->setEmailAddress($value);
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_DEALERNAME:
+                    case $vendorEnumeration::VENDOR_DEALERNAME:
                         $vendor->setName($value);
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_TAXID:
+                    case $vendorEnumeration::VENDOR_TAXID:
                         $vendor->setTaxid($value);
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_DEALERRATING:
+                    case $vendorEnumeration::VENDOR_DEALERRATING:
                         $vendor->setRating($value);
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_MATUREDEALERS:
+                    case $vendorEnumeration::VENDOR_MATUREDEALERS:
                         $vendor->setMatureDealersSection($this->isBool($value));
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_PRIMARYCATEGORY:
+                    case $vendorEnumeration::VENDOR_SPECIALREQUESTS:
+                        $vendor->setSpecialRequests($value);
+                        break;
+                    case $vendorEnumeration::VENDOR_ITEMCATEGORIES:
+                        $primarySet = true;
+                        if (!is_array($value)) {
+                            $value = [$value];
+                        }
+                        foreach ($value as $val) {
+                            $vencat = new VendorCategory();
+                            $vencat->setIsPrimary($primarySet)->setCategory(VendorCategoryEnumeration::get($val));
+                            $vendor->addVendorCategory($vencat);
+                            $primarySet = false;
+                        }
+                        break;
+                    case $vendorEnumeration::VENDOR_PRIMARYCATEGORY:
                         $vencat = new VendorCategory();
                         $vencat->setIsPrimary(true)->setCategory(VendorCategoryEnumeration::get($value));
                         $vendor->addVendorCategory($vencat);
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_SECONDARYCATEGORY_ACCESSORIES:
+                    case $vendorEnumeration::VENDOR_SECONDARYCATEGORY_ACCESSORIES:
                         if ($this->isBool($value)) {
                             $vendor->addVendorCategory(new VendorCategory(VendorCategoryEnumeration::CATEGORY_ACCESSORIES));
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_SECONDARYCATEGORY_ARTWORK:
+                    case $vendorEnumeration::VENDOR_SECONDARYCATEGORY_ARTWORK:
                         if ($this->isBool($value)) {
                             $vendor->addVendorCategory(new VendorCategory(VendorCategoryEnumeration::CATEGORY_ARTWORK));
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_SECONDARYCATEGORY_BOOKS:
+                    case $vendorEnumeration::VENDOR_SECONDARYCATEGORY_BOOKS:
                         if ($this->isBool($value)) {
                             $vendor->addVendorCategory(new VendorCategory(VendorCategoryEnumeration::CATEGORY_BOOKS));
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_SECONDARYCATEGORY_CLOTHING:
+                    case $vendorEnumeration::VENDOR_SECONDARYCATEGORY_CLOTHING:
                         if ($this->isBool($value)) {
                             $vendor->addVendorCategory(new VendorCategory(VendorCategoryEnumeration::CATEGORY_CLOTHING));
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_SECONDARYCATEGORY_COMICS:
+                    case $vendorEnumeration::VENDOR_SECONDARYCATEGORY_COMICS:
                         if ($this->isBool($value)) {
                             $vendor->addVendorCategory(new VendorCategory(VendorCategoryEnumeration::CATEGORY_COMICS));
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_SECONDARYCATEGORY_FURSUITS:
+                    case $vendorEnumeration::VENDOR_SECONDARYCATEGORY_FURSUITS:
                         if ($this->isBool($value)) {
                             $vendor->addVendorCategory(new VendorCategory(VendorCategoryEnumeration::CATEGORY_FURSUITS));
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_SECONDARYCATEGORY_GAMES:
+                    case $vendorEnumeration::VENDOR_SECONDARYCATEGORY_GAMES:
                         if ($this->isBool($value)) {
                             $vendor->addVendorCategory(new VendorCategory(VendorCategoryEnumeration::CATEGORY_GAMES));
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_SECONDARYCATEGORY_HOMEGOODS:
+                    case $vendorEnumeration::VENDOR_SECONDARYCATEGORY_HOMEGOODS:
                         if ($this->isBool($value)) {
                             $vendor->addVendorCategory(new VendorCategory(VendorCategoryEnumeration::CATEGORY_HOMEGOODS));
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_SECONDARYCATEGORY_OTHER:
+                    case $vendorEnumeration::VENDOR_SECONDARYCATEGORY_OTHER:
                         if ($this->isBool($value)) {
                             $vendor->addVendorCategory(new VendorCategory(VendorCategoryEnumeration::CATEGORY_OTHER));
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_SECONDARYCATEGORY_PERFUMES:
+                    case $vendorEnumeration::VENDOR_SECONDARYCATEGORY_PERFUMES:
                         if ($this->isBool($value)) {
                             $vendor->addVendorCategory(new VendorCategory(VendorCategoryEnumeration::CATEGORY_PERFUMES));
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_SECONDARYCATEGORY_TOYS:
+                    case $vendorEnumeration::VENDOR_SECONDARYCATEGORY_TOYS:
                         if ($this->isBool($value)) {
                             $vendor->addVendorCategory(new VendorCategory(VendorCategoryEnumeration::CATEGORY_TOYS));
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_SECONDARYCATEGORY_PRINTING:
+                    case $vendorEnumeration::VENDOR_SECONDARYCATEGORY_PRINTING:
                         if ($this->isBool($value)) {
                             $vendor->addVendorCategory(new VendorCategory(VendorCategoryEnumeration::CATEGORY_PRINTING));
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_SECONDARYCATEGORY_SCULPTURE:
+                    case $vendorEnumeration::VENDOR_SECONDARYCATEGORY_SCULPTURE:
                         if ($this->isBool($value)) {
                             $vendor->addVendorCategory(new VendorCategory(VendorCategoryEnumeration::CATEGORY_SCULPTURE));
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_PRODUCTSSOLD:
+                    case $vendorEnumeration::VENDOR_PRODUCTSSOLD:
                         $vendor->setProductsAndServices($value);
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_DEALERPHOTOS:
+                    case $vendorEnumeration::VENDOR_DEALERPHOTOS:
                         $vendor->setImageBlock($value);
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_WEBSITE:
+                    case $vendorEnumeration::VENDOR_WEBSITE:
                         $vendor->setWebsite($value);
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_TWITTER:
+                    case $vendorEnumeration::VENDOR_TWITTER:
                         $vendor->setTwitter($value);
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_SEATINGREQUESTS:
+                    case $vendorEnumeration::VENDOR_SEATINGREQUESTS:
                         $vendor->setSeatingRequests($value);
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_NEIGHBORREQUESTS:
+                    case $vendorEnumeration::VENDOR_NEIGHBORREQUESTS:
                         $vendor->setNeighborRequests($value);
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_OTHERREQUESTS:
+                    case $vendorEnumeration::VENDOR_OTHERREQUESTS:
                         $vendor->setOtherRequests($value);
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_TABLE_HALF:
+                    case $vendorEnumeration::VENDOR_TABLETYPE:
+                        $vendor->setTableRequestType(TableTypeEnumeration::get($value));
+                        break;
+                    case $vendorEnumeration::VENDOR_TABLE_HALF:
                         if ($this->isBool($value) === true) {
                             $vendor->setTableRequestType(TableTypeEnumeration::TABLETYPE_HALF);
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_TABLE_SINGLE:
+                    case $vendorEnumeration::VENDOR_TABLE_SINGLE:
                         if ($this->isBool($value) === true) {
                             $vendor->setTableRequestType(TableTypeEnumeration::TABLETYPE_SINGLE);
                         } elseif (strtoupper($value) === "1 SINGLE TABLE WITH ENDCAP") {
@@ -266,12 +300,12 @@ class VendorImportController extends AbstractController
                             $vendor->setTableRequestType(TableTypeEnumeration::TABLETYPE_SINGLE);
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_TABLE_SINGLEHALF:
+                    case $vendorEnumeration::VENDOR_TABLE_SINGLEHALF:
                         if ($this->isBool($value) === true) {
                             $vendor->setTableRequestType(TableTypeEnumeration::TABLETYPE_SINGLEHALF);
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_TABLE_DOUBLE:
+                    case $vendorEnumeration::VENDOR_TABLE_DOUBLE:
                         if ($this->isBool($value) === true) {
                             $vendor->setTableRequestType(TableTypeEnumeration::TABLETYPE_DOUBLE);
                         } elseif (strtoupper($value) === "1 DOUBLE TABLE WITH ENDCAP") {
@@ -279,7 +313,7 @@ class VendorImportController extends AbstractController
                             $vendor->setHasEndcap(true);
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_TABLE_TRIPLE:
+                    case $vendorEnumeration::VENDOR_TABLE_TRIPLE:
                         if ($this->isBool($value) === true) {
                             $vendor->setTableRequestType(TableTypeEnumeration::TABLETYPE_TRIPLE);
                         } elseif (strtoupper($value) === "1 TRIPLE TABLE WITH ENDCAP") {
@@ -289,12 +323,12 @@ class VendorImportController extends AbstractController
                             $vendor->setTableRequestType(TableTypeEnumeration::TABLETYPE_TRIPLE);
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_TABLE_QUAD:
+                    case $vendorEnumeration::VENDOR_TABLE_QUAD:
                         if ($this->isBool($value) === true) {
                             $vendor->setTableRequestType(TableTypeEnumeration::TABLETYPE_QUAD);
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_TABLE_QUINT:
+                    case $vendorEnumeration::VENDOR_TABLE_QUINT:
                         if ($this->isBool($value) === true) {
                             $vendor->setTableRequestType(TableTypeEnumeration::TABLETYPE_QUINT);
                         } elseif (strtoupper($value) === "1 QUINT TABLE WITH ENDCAP") {
@@ -304,55 +338,55 @@ class VendorImportController extends AbstractController
                             $vendor->setTableRequestType(TableTypeEnumeration::TABLETYPE_QUINT);
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_TABLE_SMALLBOOTH:
+                    case $vendorEnumeration::VENDOR_TABLE_SMALLBOOTH:
                         if ($this->isBool($value) === true) {
                             $vendor->setTableRequestType(TableTypeEnumeration::TABLETYPE_SMALLBOOTH);
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_TABLE_LARGEBOOTH:
+                    case $vendorEnumeration::VENDOR_TABLE_LARGEBOOTH:
                         if ($this->isBool($value) === true) {
                             $vendor->setTableRequestType(TableTypeEnumeration::TABLETYPE_LARGEBOOTH);
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_TABLE_ENDCAP:
+                    case $vendorEnumeration::VENDOR_TABLE_ENDCAP:
                         if ($this->isBool($value) === true) {
                             $vendor->setHasEndcap(true);
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_TABLE_AMOUNT_LARGEBOOTH:
-                    case RegFoxHeaderEnumeration::REGFOX_TABLE_AMOUNT_SMALLBOOTH:
-                    case RegFoxHeaderEnumeration::REGFOX_TABLE_AMOUNT_QUINT:
-                    case RegFoxHeaderEnumeration::REGFOX_TABLE_AMOUNT_QUAD:
-                    case RegFoxHeaderEnumeration::REGFOX_TABLE_AMOUNT_TRIPLE:
-                    case RegFoxHeaderEnumeration::REGFOX_TABLE_AMOUNT_DOUBLE:
-                    case RegFoxHeaderEnumeration::REGFOX_TABLE_AMOUNT_SINGLEHALF:
-                    case RegFoxHeaderEnumeration::REGFOX_TABLE_AMOUNT_SINGLE:
-                    case RegFoxHeaderEnumeration::REGFOX_TABLE_AMOUNT_HALF:
+                    case $vendorEnumeration::VENDOR_TABLE_AMOUNT_LARGEBOOTH:
+                    case $vendorEnumeration::VENDOR_TABLE_AMOUNT_SMALLBOOTH:
+                    case $vendorEnumeration::VENDOR_TABLE_AMOUNT_QUINT:
+                    case $vendorEnumeration::VENDOR_TABLE_AMOUNT_QUAD:
+                    case $vendorEnumeration::VENDOR_TABLE_AMOUNT_TRIPLE:
+                    case $vendorEnumeration::VENDOR_TABLE_AMOUNT_DOUBLE:
+                    case $vendorEnumeration::VENDOR_TABLE_AMOUNT_SINGLEHALF:
+                    case $vendorEnumeration::VENDOR_TABLE_AMOUNT_SINGLE:
+                    case $vendorEnumeration::VENDOR_TABLE_AMOUNT_HALF:
                         if (!empty($value)) {
                             $tableAmount = $this->cleanNumbers($value);
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_TABLE_AMOUNT_ENDCAP:
+                    case $vendorEnumeration::VENDOR_TABLE_AMOUNT_ENDCAP:
                         if (!empty($value)) {
                             $endcapAmount = $this->cleanNumbers($value);
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_ASSISTANT_SINGLE:
-                    case RegFoxHeaderEnumeration::REGFOX_ASSISTANT_SINGLEHALF:
-                    case RegFoxHeaderEnumeration::REGFOX_ASSISTANT_DOUBLE:
-                    case RegFoxHeaderEnumeration::REGFOX_ASSISTANT_TRIPLE:
-                    case RegFoxHeaderEnumeration::REGFOX_ASSISTANT_QUAD:
-                    case RegFoxHeaderEnumeration::REGFOX_ASSISTANT_QUINTBOOTH:
+                    case $vendorEnumeration::VENDOR_ASSISTANT_SINGLE:
+                    case $vendorEnumeration::VENDOR_ASSISTANT_SINGLEHALF:
+                    case $vendorEnumeration::VENDOR_ASSISTANT_DOUBLE:
+                    case $vendorEnumeration::VENDOR_ASSISTANT_TRIPLE:
+                    case $vendorEnumeration::VENDOR_ASSISTANT_QUAD:
+                    case $vendorEnumeration::VENDOR_ASSISTANT_QUINTBOOTH:
                         if (!empty($value)) {
                             $vendor->setNumAssistants((int)$value);
                         }
                         break;
-                    case RegFoxHeaderEnumeration::REGFOX_ASSISTANT_AMOUNT_SINGLE:
-                    case RegFoxHeaderEnumeration::REGFOX_ASSISTANT_AMOUNT_SINGLEHALF:
-                    case RegFoxHeaderEnumeration::REGFOX_ASSISTANT_AMOUNT_DOUBLE:
-                    case RegFoxHeaderEnumeration::REGFOX_ASSISTANT_AMOUNT_TRIPLE:
-                    case RegFoxHeaderEnumeration::REGFOX_ASSISTANT_AMOUNT_QUAD:
-                    case RegFoxHeaderEnumeration::REGFOX_ASSISTANT_AMOUNT_QUINTBOOTH:
+                    case $vendorEnumeration::VENDOR_ASSISTANT_AMOUNT_SINGLE:
+                    case $vendorEnumeration::VENDOR_ASSISTANT_AMOUNT_SINGLEHALF:
+                    case $vendorEnumeration::VENDOR_ASSISTANT_AMOUNT_DOUBLE:
+                    case $vendorEnumeration::VENDOR_ASSISTANT_AMOUNT_TRIPLE:
+                    case $vendorEnumeration::VENDOR_ASSISTANT_AMOUNT_QUAD:
+                    case $vendorEnumeration::VENDOR_ASSISTANT_AMOUNT_QUINTBOOTH:
                         if (!empty($value)) {
                             $vendor->setAssistantAmount($this->cleanNumbers($value));
                         }
@@ -361,14 +395,15 @@ class VendorImportController extends AbstractController
 
 
                     // Not doing anything with this yet
-                    //                case RegFoxHeaderEnumeration::REGFOX_DEALERAPPSTATUS:   //vendor
-                    //                case RegFoxHeaderEnumeration::REGFOX_DEALERSTATUS:  // vendor
-                    //                case RegFoxHeaderEnumeration::REGFOX_DEALERSTATUSAMOUNT:    // vendor
-                    //                case RegFoxHeaderEnumeration::REGFOX_MIDDLEINIT:     // vendor-contact
-                    //                case RegFoxHeaderEnumeration::REGFOX_PREFERREDNAME:     // vendor-contact
+                    //                case $vendorEnumeration::VENDOR_DEALERAPPSTATUS:   //vendor
+                    //                case $vendorEnumeration::VENDOR_DEALERSTATUS:  // vendor
+                    //                case $vendorEnumeration::VENDOR_DEALERSTATUSAMOUNT:    // vendor
+                    //                case $vendorEnumeration::VENDOR_MIDDLEINIT:     // vendor-contact
+                    //                case $vendorEnumeration::VENDOR_PREFERREDNAME:     // vendor-contact
 
                 }
             } catch (OptionNotFoundException $onfe) {
+                $foo = 'bar';
             }
         }
         $vendor->setVendorContact($vendorContact);
