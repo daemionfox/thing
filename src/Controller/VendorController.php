@@ -13,6 +13,7 @@ use App\Entity\VendorNote;
 use App\Enumerations\ActionEnumeration;
 use App\Enumerations\TableCategoryEnumeration;
 use App\Enumerations\TableTypeEnumeration;
+use App\Enumerations\VendorAreaEnumeration;
 use App\Enumerations\VendorCategoryEnumeration;
 use App\Enumerations\VendorNoteLevelEnumeration;
 use App\Enumerations\VendorStatusEnumeration;
@@ -230,6 +231,14 @@ class VendorController extends AbstractController
             $vendor = $entityManager->getRepository(Vendor::class)->find($vendorID);
         } else {
             $vendor->setRemoteId($this->getNewRemoteID($entityManager));
+        }
+
+        $curr = $vendor->getArea();
+        $norm = VendorAreaEnumeration::normalize($vendor->getArea());
+        $vendor->setArea($norm);
+
+        if (empty($vendor->getArea())) {
+            $vendor->setArea(VendorAreaEnumeration::AREA_GENERAL);
         }
 
 

@@ -61,7 +61,8 @@ class VendorFormType extends AbstractType
                 'choices' => VendorAreaEnumeration::getList(),
                 'expanded' => false,
                 'multiple' => false,
-                'required' => false
+                'required' => false,
+                'empty_data' => VendorAreaEnumeration::AREA_GENERAL
             ])
             ->add('seatingRequests')
             ->add('neighborRequests')
