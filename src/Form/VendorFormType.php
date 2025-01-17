@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Vendor;
 use App\Enumerations\TableTypeEnumeration;
+use App\Enumerations\VendorAreaEnumeration;
 use App\Enumerations\VendorRatingEnumeration;
 use App\Enumerations\VendorStatusEnumeration;
 use Symfony\Component\Form\AbstractType;
@@ -55,6 +56,13 @@ class VendorFormType extends AbstractType
                 ]
 
             )
+            ->add('area', ChoiceType::class, [
+                'attr' => [ 'class' => 'form-control', ],
+                'choices' => VendorAreaEnumeration::getList(),
+                'expanded' => false,
+                'multiple' => false,
+                'required' => false
+            ])
             ->add('seatingRequests')
             ->add('neighborRequests')
             ->add('otherRequests')
