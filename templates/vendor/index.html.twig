@@ -17,7 +17,7 @@
     <div class="col-10 offset-1 d-flex align-items-center justify-content-center pt-5">
         <div class="card col-12" id="register-staff-screen">
             <div class="card-header">
-                <div class="col-2 float-end text-end">Total Vendors: {{ vendors.getTotalItemCount }}</div>
+                <div class="col-2 float-end text-end">Total Vendors: {{ vendors|length }}</div>
                 <h2>Vendor List</h2>
             </div>
             <div class="card-body">
@@ -60,12 +60,9 @@
                     <thead>
                     <tr>
                         <th>&nbsp;</th>
-                        <th {% if vendors.isSorted('name') %} class="sorted"{% endif %}>
-                            {{ knp_pagination_sortable(vendors, 'Name', 'name') }}</th>
-                        <th {% if vendors.isSorted('vendorContact.lastName') %} class="sorted"{% endif %}>
-                            {{ knp_pagination_sortable(vendors, 'Contact', 'vendorContact.lastName') }}</th>
-                        <th {% if vendors.isSorted('status') %} class="sorted"{% endif %}>
-                            {{ knp_pagination_sortable(vendors, 'Status', 'status') }}</th>
+                        <th>Name</th>
+                        <th>Last Name</th>
+                        <th>Status</th>
                         <th>&nbsp;</th>
                         <th>&nbsp;</th>
                     </tr>
@@ -99,7 +96,7 @@
 
                     </tbody>
                 </table>
-                <div class="navigation">{{ knp_pagination_render(vendors) }}</div>
+{#                <div class="navigation">{{ knp_pagination_render(vendors) }}</div>#}
                 {% if "ROLE_EDITVENDOR" in user.roles %}
                     <div class="download mt-3"><a class="btn btn-secondary" href="/vendor/getlist?filter_status={{ filter.status }}&filter_table={{ filter.table }}&filter_category={{ filter.category }}"><i class="far fa-download"></i> Download Vendor List</a></div>
                 {% endif %}

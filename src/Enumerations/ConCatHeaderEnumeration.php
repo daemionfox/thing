@@ -21,9 +21,9 @@ class ConCatHeaderEnumeration extends VendorMapEnumeration
     const VENDOR_BUSINESSNAME = "name";
     const VENDOR_BUSINESSLEGALNAME = "name";
     const VENDOR_BUSINESSPHONENUMBER = "Business Phone Number";
-    const VENDOR_EMAIL = "Business Email Address";
+    const VENDOR_EMAIL = "email";
     const VENDOR_TAXID  = "PA Tax ID";
-    const VENDOR_WEBSITE  = "Business Website";
+    const VENDOR_WEBSITE  = "Business website for curation";
     const VENDOR_PRODUCTSSOLD  = "Business Description";
     const VENDOR_OTHERREQUESTS  = "Other Items";
     const VENDOR_ITEMCATEGORIES  = "Item Categories";
@@ -34,11 +34,11 @@ class ConCatHeaderEnumeration extends VendorMapEnumeration
 
     const VENDOR_DEALERAPPSTATUS = null;
     const VENDOR_DEALERSTATUSAMOUNT = null;
-    const VENDOR_FIRSTNAME = null;
-    const VENDOR_LASTNAME = null;
+    const VENDOR_FIRSTNAME = "firstName";
+    const VENDOR_LASTNAME = "lastName";
     const VENDOR_MIDDLEINIT = null;
     const VENDOR_PREFERREDNAME = null;
-    const VENDOR_BADGENAME = null;
+    const VENDOR_BADGENAME = "username";
     const VENDOR_MATUREDEALERS = null;
     const VENDOR_PRIMARYCATEGORY = null;
     const VENDOR_SECONDARYCATEGORY_ACCESSORIES = null;

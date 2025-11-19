@@ -81,7 +81,8 @@ class VendorController extends AbstractController
                 'name' => $user->getName(),
                 'roles' => $user->getRoles()
             ],
-            'vendors' => $paginator->paginate($filteredList, $request->query->getInt('page', 1), 50),
+//            'vendors' => $paginator->paginate($filteredList, $request->query->getInt('page', 1), 50),
+            'vendors' => $filteredList,
             'search' => $filter['search'],
             'status' => VendorStatusEnumeration::getList(),
             'category' => VendorCategoryEnumeration::getList(),

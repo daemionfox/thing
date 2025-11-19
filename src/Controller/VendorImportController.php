@@ -91,7 +91,7 @@ class VendorImportController extends AbstractController
     public function runImport(Request $request, FormInterface $form): Response
     {
         set_time_limit(-1);
-
+        ini_set("memory_limit", "8G");
         $cacheDir = __DIR__ . "/../../cache";
         $regfoxUpload = $form->get('regfox_csv')->getData();
         $filename = $regfoxUpload->getClientOriginalName();
@@ -114,6 +114,8 @@ class VendorImportController extends AbstractController
             $this->doctrine->persist($vend);
             $this->doctrine->flush();
             $this->doctrine->clear();
+            unset($vend);
+            gc_collect_cycles();
         }
         return new RedirectResponse("/vendor");
     }
@@ -141,6 +143,9 @@ class VendorImportController extends AbstractController
 
         foreach ($record as $key => $value) {
             try {
+                if(empty($key)) {
+                    continue;
+                }
                 $cleanKey = $vendorEnumeration::get($vendorEnumeration::simplify($key));
                 if (empty($cleanKey)) {
                     continue;
@@ -182,11 +187,19 @@ class VendorImportController extends AbstractController
                     case $vendorEnumeration::VENDOR_ITEMCATEGORIES:
                         $primarySet = true;
                         if (!is_array($value)) {
+                            $value = json_decode($value, true);
+                        }
+                        if (!is_array($value)) {
                             $value = [$value];
                         }
+
                         foreach ($value as $val) {
+                            $val = trim($val);
+                            if (empty($val)) {
+                                continue;
+                            }
                             $vencat = new VendorCategory();
-                            $vencat->setIsPrimary($primarySet)->setCategory(VendorCategoryEnumeration::get($val));
+                            $vencat->setIsPrimary($primarySet)->setCategory($val);
                             $vendor->addVendorCategory($vencat);
                             $primarySet = false;
                         }
