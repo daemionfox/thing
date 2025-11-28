@@ -26,6 +26,7 @@ class TableTypeEnumeration extends AbstractEnumeration
     const TABLETYPE_SMALLBOOTH = "Small Booth";
     const TABLETYPE_TRIPLE = "Triple Table";
     const TABLETYPE_TATTOO = "Tattoo Booth";
+    const TABLETYPE_ISLAND = "Island";
 
     const TABLEAMOUNT_HALF = 99;
     const TABLEAMOUNT_SINGLE = 200;
@@ -39,6 +40,7 @@ class TableTypeEnumeration extends AbstractEnumeration
     const TABLEAMOUNT_LARGEBOOTH = 1600;
     const TABLEAMOUNT_TATTOO = 0;
     const TABLEAMOUNT_ENDCAP = 100;
+    const TABLEAMOUNT_ISLAND = 0;
 
     const TABLEASSTMAX_HALF = 1;
     const TABLEASSTMAX_SINGLE = 1;
@@ -52,7 +54,8 @@ class TableTypeEnumeration extends AbstractEnumeration
     const TABLEASSTMAX_LARGEBOOTH = 6;
     const TABLEASSTMAX_TATTOO = 1;
     const TABLEASSTMAX_ENDCAP = 0;
-    
+    const TABLEASSTMAX_ISLAND = 0;
+
     const TABLESIZE_HALF = .5;
     const TABLESIZE_SINGLE = 1;
     const TABLESIZE_DOUBLE = 2;
@@ -64,7 +67,8 @@ class TableTypeEnumeration extends AbstractEnumeration
     const TABLESIZE_LARGEBOOTH = "Large Booth";
     const TABLESIZE_TATTOO = "Tattoo Booth";
     const TABLESIZE_ENDCAP = 0;
-       
+    const TABLESIZE_ISLAND = "Island";
+
     public static function getSize($type)
     {
         switch(strtoupper($type)) {
@@ -90,6 +94,8 @@ class TableTypeEnumeration extends AbstractEnumeration
                 return self::TABLESIZE_LARGEBOOTH;
             case strtoupper(self::TABLETYPE_TATTOO):
                 return self::TABLESIZE_TATTOO;
+            case strtoupper(self::TABLETYPE_ISLAND):
+                return self::TABLESIZE_ISLAND;
         }
         return 0;
     }
@@ -122,6 +128,8 @@ class TableTypeEnumeration extends AbstractEnumeration
                 return self::TABLEAMOUNT_LARGEBOOTH;
             case self::TABLETYPE_TATTOO:
                 return self::TABLEAMOUNT_TATTOO;
+            case self::TABLETYPE_ISLAND:
+                return self::TABLEAMOUNT_ISLAND;
         }
         throw new OptionNotFoundException("Could not find option for {$type}");
     }
@@ -153,6 +161,8 @@ class TableTypeEnumeration extends AbstractEnumeration
                 return self::TABLEASSTMAX_LARGEBOOTH;
             case self::TABLETYPE_TATTOO:
                 return self::TABLEASSTMAX_TATTOO;
+            case self::TABLETYPE_ISLAND:
+                return self::TABLEASSTMAX_ISLAND;
         }
         throw new OptionNotFoundException("Could not find option for {$type}");
     }

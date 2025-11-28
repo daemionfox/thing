@@ -15,6 +15,7 @@ class TableCategoryEnumeration extends \Eloquent\Enumeration\AbstractEnumeration
     const CATEGORY_LBOOTH = 'Large Booth';
     const CATEGORY_SBOOTH = 'Small Booth';
     const CATEGORY_TATTOO = 'Tattoo Booth';
+    const CATEGORY_ISLAND = "Island";
     const CATEGORY_BODEGA = 'Bodega';
     const CATEGORY_MATURE = '18+ Section';
     const CATEGORY_ENDCAP = 'With Endcap';
@@ -28,8 +29,10 @@ class TableCategoryEnumeration extends \Eloquent\Enumeration\AbstractEnumeration
             return self::CATEGORY_LBOOTH;
         } elseif ($vendor->getTableRequestType() === TableTypeEnumeration::TABLESIZE_SMALLBOOTH) {
             return self::CATEGORY_SBOOTH;
-        }elseif ($vendor->getTableRequestType() === TableTypeEnumeration::TABLESIZE_TATTOO) {
+        } elseif ($vendor->getTableRequestType() === TableTypeEnumeration::TABLESIZE_TATTOO) {
             return self::CATEGORY_TATTOO;
+        } elseif ($vendor->getTableRequestType() === TableTypeEnumeration::TABLESIZE_ISLAND) {
+            return self::CATEGORY_ISLAND;
         } elseif ($vendor->getArea() === VendorAreaEnumeration::AREA_BODEGA) {
             return self::CATEGORY_BODEGA;
         } elseif ($vendor->isHasEndcap()){
