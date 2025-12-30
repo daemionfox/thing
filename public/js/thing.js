@@ -71,6 +71,8 @@ $(document).ready(function(){
         $("#hover-table").html(totalTable);
         $("#hover-lgbooth").html(largeTotal);
         $("#hover-smbooth").html(smallTotal);
+        $("#hover-bodega").html(bodegaTotal);
+        $("#hover-islands").html(islandTotal);
         $("#report-window").html(totalVend + curVend);
     });
 
@@ -84,6 +86,7 @@ $(document).ready(function(){
         let largeTotal = 0;
         let tattooTotal = 0;
         let bodegaTotal = 0;
+        let islandTotal = 0;
 
         $(".process-check").each(function(indx, item) {
             let voteproc = $(item).parents('.vote-process').first();
@@ -98,7 +101,9 @@ $(document).ready(function(){
                     smallTotal++;
                 } else if (tableLocal === "Tattoo Booth") {
                     tattooTotal++;
-                } else if (tableLocal === .5) {
+                } else if (tableLocal === "Island") {
+                    islandTotal++;
+                } else if (tableLocal === .5 || tableLocal === ".5" ) {
                     bodegaTotal++;
                 } else {
                     totalTable += tableLocal;
@@ -112,7 +117,7 @@ $(document).ready(function(){
         $("#hover-smbooth").html(smallTotal);
         $("#hover-tbooth").html(tattooTotal);
         $("#hover-bodega").html(bodegaTotal);
-
+        $("#hover-islands").html(islandTotal);
         $("#report-hover").html(totalVend);
     }).on('mouseout', function(event){
         event.preventDefault();
