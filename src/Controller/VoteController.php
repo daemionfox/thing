@@ -188,6 +188,7 @@ class VoteController extends AbstractController
         $tbooths = 0;
         $bodega = 0;
         $mature = 0;
+        $islands = 0;
         /**
          * @var Vendor $vendor
          */
@@ -208,8 +209,10 @@ class VoteController extends AbstractController
                     case TableTypeEnumeration::TABLESIZE_HALF:
                         $bodega++;
                         break;
+                    case TableTypeEnumeration::TABLESIZE_ISLAND:
+                        $islands++;
                     default:
-                        $tablespaces += $table;
+                        $tablespaces += (int)$table;
                         break;
                 }
             }
@@ -301,6 +304,7 @@ class VoteController extends AbstractController
             'smbooth' => $smbooths,
             'tbooth' => $tbooths,
             'bodega' => $bodega,
+            'islands' => $islands,
             'approveform' => $form->createView()
         ]);
 

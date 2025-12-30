@@ -37,6 +37,8 @@ $(document).ready(function(){
         let totalTable = 0;
         let smallTotal = 0;
         let largeTotal = 0;
+        let bodegaTotal = 0;
+        let islandTotal = 0;
 
         let curVend = parseInt($("#approve_vendor_approved").val());
         $(".vote-process").removeClass('process-accept');
@@ -51,7 +53,11 @@ $(document).ready(function(){
                 if (tableLocal === "Large Booth") {
                     largeTotal++;
                 } else if (tableLocal === "Small Booth") {
-                    smallTotal++
+                    smallTotal++;
+                } else if (tableLocal === "Island") {
+                    islandTotal++;
+                } else if (tableLocal === .5 || tableLocal === ".5" ) {
+                    bodegaTotal++;
                 } else {
                     totalTable += tableLocal;
                 }
